@@ -187,3 +187,62 @@ Y se estará renderizando el método index
 
 Generamos vistas en la carpeta app\Views y las renderizamos en el controlador con el método view();
 Es preferible agrupar las vistas en carpetas para tener un mayor orden
+
+## 7-. Layouts [docs](https://www.codeigniter.com/user_guide/outgoing/view_layouts.html?highlight=rendersection)
+
+Los Layouts nos sirven para modularizar y reutilizar elementos en diferentes vistas
+Vamos a separar el header y el footer, además tendremos un main que renderizará todo el contenido HMTL
+
+En nuestro archivo main vamos a incluir el header y el footer con el método:
+
+```php
+    $this->include();
+```
+
+El cual carga elementos **estaticos**
+Sin embargo, el contenido y el title del documento es algo dinamico, por tanto, usaremos el método:
+
+```php
+    $this->renderSection();
+```
+
+El cual tendrá que especificarse en cada vista
+
+En este mismo archivo podemos incluir las hojas de estilos y archivos js que necesitemos en todas las vistas. Este es el resultado de nuestro main.php
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><?= $this->renderSection('title') ?></title>
+    <!-- Bulma -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- Busca a partir de la carpeta Views -->
+    <?= $this->include('Front/layout/header.php') ?>
+    <!-- renderSection actúa como un marcador de posición para el contenido -->
+    <?= $this->renderSection('content') ?>
+    <?= $this->include('Front/layout/footer.php') ?>
+  </body>
+</html>
+```
+
+Ahora en nuestra vista home.php vamos a definir los contenidos dinamicos
+![layouts](./assets/layouts.png)
+
+- En la parte de arriba usamos el método extend() para traer ese layout
+- Ahora entre los métodos section y endSection especificamos el nombre de la sección dinamica y su contenido:
+  ```php
+    <?php $this->section('title') ?>
+    Home
+    <?php $this->endSection() ?>
+  ```
+
+Con esto estaremos reutilizando layouts en nuestras vistas, obteniendo archivos HTML estaticos y también renderizando estructuras dinamicas
