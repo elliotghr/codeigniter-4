@@ -106,3 +106,79 @@ class Home extends BaseController
 ```
 
 De esta manera podemos crear modulos y utilizarlos en cualquier parte de nuestra aplicación, facilitando el uso de componentes y agilizando el desarollo
+
+## 5-. Rutas
+
+La definición de las rutas las encotramos en app\Config\Routes.php
+Tenemos dos tipos de enrutamiento. Uno es Enrutamiento de ruta definida y el otro es Enrutamiento automático . Con Enrutamiento de ruta definida, puede definir rutas manualmente. Permite URL flexible. El enrutamiento automático enruta automáticamente las solicitudes HTTP según las convenciones y ejecuta los métodos de controlador correspondientes. No hay necesidad de definir rutas manualmente.
+
+Cuando especifica una ruta, elige un método correspondiente a los verbos HTTP (método de solicitud). Si espera una solicitud GET, utilice el get()método:
+
+Configuración de reglas de enrutamiento
+
+```php
+$routes->get('/', 'Home::index');
+```
+
+Una ruta toma la ruta de ruta (ruta URI relativa a la URL base /) a la izquierda y la asigna al controlador de ruta (controlador y método Home::index) a la derecha, junto con los parámetros que deben pasarse al controlador.
+
+Si ese método requiere que se le pasen parámetros, se enumerarán después del nombre del método, separados por barras diagonales:
+
+```php
+// Calls $Users->list()
+$routes->get('users', 'Users::list');
+
+// Calls $Users->list(1, 23)
+$routes->get('users/1/23', 'Users::list/1/23');
+```
+
+Una URL con producto como primer segmento y un número en el segundo se asignará a la \App\Controllers\Catalogclase y el método productLookupByID() pasará la coincidencia como una variable al método:
+
+```php
+$routes->get('product/(:num)', 'Catalog::productLookupByID/$1');
+```
+
+Rutas de verbos HTTP
+Puede usar cualquier verbo HTTP estándar (GET, POST, PUT, DELETE, OPTIONS, etc.):
+
+```php
+$routes->post('products', 'Product::feature');
+$routes->put('products/1', 'Product::feature');
+$routes->delete('products/1', 'Product::feature');
+```
+
+Ver Rutas
+
+Si solo desea representar una vista que no tiene lógica asociada, puede usar el view()método. Esto siempre se trata como una solicitud GET. Este método acepta el nombre de la vista a cargar como segundo parámetro.
+
+```php
+// Displays the view in /app/Views/pages/about.php
+$routes->view('about', 'pages/about');
+Si usa marcadores de posición dentro de su ruta, puede acceder a ellos dentro de la vista en una variable especial, $segments. Están disponibles como una matriz, indexados en el orden en que aparecen en la ruta.
+```
+
+```php
+// Displays the view in /app/Views/map.php
+$routes->view('map/(:segment)/(:segment)', 'map');
+
+// Within the view, you can access the segments with
+// $segments[0] and $segments[1] respectively.
+```
+
+Agrupamientos
+
+Podemos agrupar rutas bajo un nombre en común, esto con el método group(). El nombre del grupo se convierte en un segmento que aparece antes de las rutas definidas dentro del grupo. Esto le permite reducir la escritura necesaria para crear un amplio conjunto de rutas que comparten la cadena de apertura, como cuando se crea un área de administración:
+
+```php
+// Podemos agrupar rutas bajo un nombre común
+// El prefijo aparecerá antes de cada ruta definida
+// dentro de los corchetes podemos definir un namespace (en donde buscará los controladores)
+$routes->group('home', ["namespace" => "App\Controllers\Front"], function ($routes) {
+    $routes->get('/', 'Home::index');
+    $routes->get('/libreria', 'Home::sayHola');
+});
+```
+
+Con esto nuestra ruta quedaría de la siguiente manera
+"http://blog.test/home"
+Y se estará renderizando el método index
