@@ -56,3 +56,53 @@ Al estar en development podemos acceder a ciertas herramientas
 ![Virtual Host](./assets/Environment-tools.png)
 
 Aqui podemos ver en que vista estamos, los tiempos de carga de los archivos, los archivos que se obtienen, las rutas, los eventos, un historial de peticiones y por último las variables que recibimos al cargar la vista, variables de sesión, consultas, etc.
+
+## 4-. Controladores y PSR-4
+
+Dentro de app\Controllers almacenaremos nuestros controlador.
+Contamos con un BaseController que pertenece al core de CI. Aqui podemos cargar helpers, podemos pre cargar modelos, librerías, etc.
+
+Además tenemos un Controlador Home.php que nos muestra la bienvenida de CI
+
+### PSR-4
+
+Estandar definido por la comunidad el cual ayuda a la carga de archivos (en PHP nativo se refiere a include/require), esto lo haremos haciendo uso de los namespace. CI utiliza la carga de archivos automatica con el objetivo de conastruir apps más modulares. Nosotros podemos llamar a otros modulos simplemente definiendo su namespace, estos namespaces los vemos en app\Config\Autoload.php
+
+Un ejemplo de esto:
+
+Creamos una archivo en la siguiente ruta: app\Libraries\Codigo.php
+Dentro de este archivo generaremos un namespace y una clase
+
+```php
+namespace App\Libraries;
+
+class Codigo
+{
+    public function sayHi()
+    {
+        return "hi";
+    }
+}
+```
+
+Ahora en nuestro Controlador Home haremos uso de este método de la siguiente manera
+
+```php
+namespace App\Controllers;
+// Importamos la clase codigo
+use App\Libraries\Codigo;
+
+class Home extends BaseController
+{
+    public function index()
+    {
+        // Instanciamos un objeto de esta clase
+        $instancia_codigo = new Codigo();
+        // Llamamos al método
+        echo $instancia_codigo->sayHi();
+        return view('welcome_message');
+    }
+}
+```
+
+De esta manera podemos crear modulos y utilizarlos en cualquier parte de nuestra aplicación, facilitando el uso de componentes y agilizando el desarollo
