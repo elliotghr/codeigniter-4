@@ -182,3 +182,8 @@ $routes->group('home', ["namespace" => "App\Controllers\Front"], function ($rout
 Con esto nuestra ruta quedaría de la siguiente manera
 "http://blog.test/home"
 Y se estará renderizando el método index
+
+## 6-. Vistas
+
+Generamos vistas en la carpeta app\Views y las renderizamos en el controlador con el método view();
+Es preferible agrupar las vistas en carpetas para tener un mayor orden

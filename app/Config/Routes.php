@@ -37,7 +37,6 @@ $routes->set404Override();
 // dentro de los corchetes podemos definir un namespace (en donde buscará los controladores)
 $routes->group('home', ["namespace" => "App\Controllers\Front"], function ($routes) {
     $routes->get('/', 'Home::index');
-    $routes->get('/libreria', 'Home::sayHola');
 });
 
 
