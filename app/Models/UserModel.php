@@ -23,9 +23,20 @@ class UserModel extends Model
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
+    // Especificamos en que momento se ejecutará la callback
+    protected $beforeInsert = ['addGroup'];
 
     protected $assignGroup;
 
+    // Creamos un modelo para nuestro callback
+    public function addGroup($data)
+    {
+        // Modificamos la data agregando un campo group con el valor de assignGroup
+        // Independientemente del contenido de $data siempre habrá una clave data que contiene los datos primarios
+        $data['data']['group'] = $this->assignGroup;
+        // Retornamos la variable $data
+        return $data;
+    }
     // Creamos un modelo para obtener el id del grupo
     public function withGroup($group)
     {

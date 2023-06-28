@@ -22,10 +22,10 @@ class Register extends BaseController
     {
         // Simulando un POST
         $data = [
-            'email' => 'elliot@gmail.com',
+            'email' => 'nano@gmail.com',
             'password' => '12341234',
-            'name' => 'elliot',
-            'surname' => 'gandarilla',
+            'name' => 'nano',
+            'surname' => 'banano',
             'country_id' => '1',
         ];
         // Instanciamos la entidad pasando los datos del form
@@ -39,7 +39,7 @@ class Register extends BaseController
         // Acedemos al modelo UsersModel instanciandolo
         $userModel = new \App\Models\UserModel();
         // Accedemos al método withGroup y pasamos como parametro el valor que se obtiene en $this->configs->default_group_users
-        d($userModel->withGroup($this->configs->default_group_users));
+        $userModel->withGroup($this->configs->default_group_users);
         // Usamos el método save para insertar los datos a la tabla
         $userModel->save($user);
         return view('Auth/register');

@@ -625,3 +625,76 @@ class Register extends BaseController
     }
 }
 ```
+
+## 16-. Callbacks
+
+Para agregar el grupo a nuestro controlador con ayuda del archivo de configuración y el Model necesitaremos hacer uso de los Model Events y de las Callbacks
+
+Model Events
+Hay varios puntos dentro de la ejecución del modelo en los que puede especificar múltiples métodos **callback** para ejecutar. Estos métodos se pueden usar para normalizar datos, codificar contraseñas, guardar entidades relacionadas y mucho más. Los siguientes puntos en la ejecución del modelo pueden verse afectados, cada uno a través de una propiedad de clase: $beforeInsert, $afterInsert, $beforeInsertBatch, $afterInsertBatch, $beforeUpdate, $afterUpdate, $beforeUpdateBatch, $afterUpdateBatch, $afterFindy $afterDelete.
+
+Definición de callbacks
+Usted especifica las callbacks creando primero un nuevo método de clase en su modelo para usar. Esta clase siempre recibirá un array $data como su único parámetro. El contenido exacto de la array $data variará según los eventos, pero **siempre contendrá una clave llamada data** que contiene los datos primarios pasados ​​al método original. En el caso de los métodos insert* o update*, serán los pares clave/valor que se están insertando en la base de datos. La matriz principal también contendrá los otros valores pasados ​​al método y se detallarán más adelante. El método de devolución de llamada debe devolver la matriz $data original para que otras callbacks tengan la información completa.
+
+Ej:
+
+```php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class MyModel extends Model
+{
+    // Método hasPassword que recibe $data
+    protected function hashPassword(array $data)
+    {
+        // el la clave data validamos que venga el password
+        if (! isset($data['data']['password'])) {
+            return $data;
+        }
+        // Si viene el password creamos un nuevo campo llamado password_hash donde hasheamos el campo passwrod
+        $data['data']['password_hash'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
+        // Eliminamos el campo password
+        unset($data['data']['password']0);
+        // Por último retornamos la data
+        return $data;
+    }
+}
+```
+
+Especificación de devoluciones de llamada para ejecutar
+Usted especifica cuándo ejecutar las devoluciones de llamada agregando el nombre del método a la propiedad de clase adecuada ( $beforeInsert, $afterUpdate, etc.). Se pueden agregar varias devoluciones de llamada a un solo evento y se procesarán una tras otra. Puede usar la misma devolución de llamada en múltiples eventos:
+
+```php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class MyModel extends Model
+{
+    protected $beforeInsert = ['hashPassword'];
+}
+```
+
+En nuestro código primero especificamos cuando se ejecutará nuestra callback
+
+```php
+    // Especificamos en que momento se ejecutará la callback
+    protected $beforeInsert = ['addGroup'];
+```
+
+Para posteriormente crear la callback
+
+```php
+    // Creamos un modelo para nuestro callback
+    public function addGroup($data)
+    {
+        // Modificamos la data agregando un campo group con el valor de assignGroup
+        // Independientemente del contenido de $data siempre habrá una clave data que contiene los datos primarios
+        $data['data']['group'] = $this->assignGroup;
+        // Retornamos la variable $data
+        return $data;
+    }
+```
+
+Una vez hecho esto, antes de un insert se va a ejectuar nuestra callback addGroup y asignará el valor del group
