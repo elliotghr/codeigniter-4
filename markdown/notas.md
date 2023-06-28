@@ -255,13 +255,13 @@ Las migraciones de la tabla de la base de datos rastrean qué migraciones ya se 
 
 Las migraciones se almacenan en la ruta: app/Database/Migrations/
 
-Para crear una ruta en Laragon por terminal de comandos escribiremos los siguientes comandos:
+Para crear una migración por terminal de comandos en Laragon escribiremos los siguientes comandos:
 
 ```CLI
 php spark make:migration
 ```
 
-Posterior a esto escrbiiremos el nombre de la clase y tendremos nuestro archivo creado:
+Posterior a esto escrbiremos el nombre de la clase y tendremos nuestro archivo creado:
 
 ```php
 namespace App\Database\Migrations;
@@ -282,14 +282,14 @@ class Countries extends Migration
 }
 ```
 
-El metodo up sirve para crear nuestra tabla
-El metodo down sirve para las instrucciones de eliminar o hacer un rollback de la tabla
+- El metodo up sirve para crear nuestra tabla
+- El metodo down sirve para las instrucciones de eliminar o hacer un rollback de la tabla
 
 Ahora, en nuestro administrador de Laragon crearemos una DB en blanco antes de trabajar con las Migraciones:
 
 ![DB](./assets/db.png)
 
-En nuestro archivo .evn especificamos los datos de la DB
+En nuestro archivo .env especificamos los datos de la DB
 
 ```conf
  database.default.hostname = localhost
@@ -310,3 +310,20 @@ Si todo sale correcto obtendremos lo siguiente:
 ![create migrate](./assets/migrate.png)
 
 Con esto habremos creado nuestra tabla
+
+## 9-. [Foreign Keys](https://www.codeigniter.com/user_guide/dbmgmt/forge.html?highlight=foreignkey#CodeIgniter\Database\Forge::addForeignKey)
+
+Para agregar las llaves foraneas haremos uso del método addForeignKey():
+
+```php
+$this->forge->addForeignKey('users_id', 'users', 'id', 'CASCADE', 'CASCADE');
+// gives CONSTRAINT `my_fk_name` FOREIGN KEY(`users_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+```
+
+Al actualizar nuestras migraciones tendremos que hacer un refresh para que los cambios surjan efecto, eso lo realizamos con el siguiente comando:
+
+```CLI
+php spark migrate:refresh
+```
+
+En caso de error debemos verificar que los atributos de la llave foranea deben estar identicos a la llave primaria de la otra tabla, también debemos tener cuidado en el ordene en el que se refrescan las migraciones

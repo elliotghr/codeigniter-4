@@ -14,7 +14,7 @@ class InfoUsers extends Migration
                 'constraint'     => 12,
                 'unsigned'       => true,
                 'auto_increment' => true,
-                'null' => false,
+                'null'           => false,
             ],
             'name' => [
                 'type'       => 'VARCHAR',
@@ -42,6 +42,8 @@ class InfoUsers extends Migration
             ],
         ]);
         $this->forge->addKey('user_id', true);
+        $this->forge->addForeignKey('country_id', 'countries', 'country_id', 'CASCADE', 'RESTRICT');
+        $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('info_users');
     }
 
