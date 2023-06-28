@@ -472,3 +472,27 @@ Aqui podemos ver que la entidad ya obtiene los datosd el formulario, además de 
 En la entidad hacemos uso de los date Mutators, de forma predeterminada, la clase Entity convertirá los campos denominados created_at , updated_at o delete_at en instancias de tiempo cada vez que se establezcan o recuperen.
 Además de usar la lógica de negocio, con ayuda de los métodos set y get retornando el atributo aplicando cualquier lógica comercial o conversión de datos que necesite.
 Con todo esto podremos devoler los datos en el controlador de la manera en que deseemos.
+
+## 14-. [Modelos](https://www.codeigniter.com/user_guide/models/model.html#id3)
+
+El modelo de CodeIgniter proporciona características convenientes y funcionalidades adicionales que las personas usan comúnmente para que trabajar con una sola tabla en su base de datos sea más conveniente.
+
+Viene listo para usar con métodos de ayuda para muchas de las formas estándar en las que necesitaría interactuar con una tabla de base de datos, incluida la búsqueda de registros, la actualización de registros, la eliminación de registros y más.
+
+La clase modelo tiene algunas opciones de configuración que se pueden configurar para permitir que los métodos de la clase funcionen sin problemas para usted. Los dos primeros son usados ​​por todos los métodos CRUD para determinar qué tabla usar y cómo podemos encontrar los registros requeridos:
+
+En nuestro controlador tenemos diferentes maneras de acceder a un modelo, las cuales son.
+
+```php
+// Create a new class manually.
+$userModel = new \App\Models\UserModel();
+
+// Create a shared instance of the model.
+$userModel = model('UserModel');
+// or
+$userModel = model('App\Models\UserModel');
+// or
+$userModel = model(App\Models\UserModel::class);
+```
+
+Una vez instanciado nuestro objeto tendremos que insertar la data, para esto consultamos los métodos disponibles en la [documentación](https://www.codeigniter.com/user_guide/models/model.html#working-with-query-builder)
