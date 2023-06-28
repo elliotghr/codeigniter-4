@@ -22,4 +22,18 @@ class UserModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
+
+
+    protected $assignGroup;
+
+    // Creamos un modelo para obtener el id del grupo
+    public function withGroup($group)
+    {
+        $row = $this->db->table('groups')->where('name_group', $group)->get()->getFirstRow();
+        d($row);
+
+        if ($row !== null) {
+            $this->assignGroup = $row->group_id;
+        }
+    }
 }

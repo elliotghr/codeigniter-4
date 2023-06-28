@@ -496,3 +496,132 @@ $userModel = model(App\Models\UserModel::class);
 ```
 
 Una vez instanciado nuestro objeto tendremos que insertar la data, para esto consultamos los métodos disponibles en la [documentación](https://www.codeigniter.com/user_guide/models/model.html#working-with-query-builder)
+
+## 15-. Archivos de Configuración
+
+Acualmente en nuestro controlador obtenemos los datos POST de la siguiente manera
+
+```php
+        $data = [
+            'email' => 'elliot@gmail.com',
+            'password' => '12341234',
+            'name' => 'elliot',
+            'surname' => 'gandarilla',
+            'group' => '2',
+            'country_id' => '1',
+        ];
+```
+
+Sin embargo no queremos asignar manualmente el grupo (que en este caso sería siempre el id 2), por tanto, podemops manejar esto en el archivo .env o a través de la creación de un [archivo de configuración](https://www.codeigniter.com/user_guide/general/configuration.html#creating-configuration-files)
+
+Cuando necesite una nueva configuración, primero cree un nuevo archivo en la ubicación deseada. La ubicación de archivo predeterminada (recomendada para la mayoría de los casos) es app/Config . La clase debe usar el espacio de nombres apropiado y debe extenderse CodeIgniter\Config\BaseConfigpara garantizar que pueda recibir configuraciones específicas del entorno.
+
+En nuestro caso del group:
+
+```php
+namespace Config;
+
+use CodeIgniter\Config\BaseConfig;
+
+class CustomBlog extends BaseConfig
+{
+    public $default_group_users  = 'user';
+}
+```
+
+Posteriormente accedemos a nuestro archivo de configuración en el controlador para hacer uso de él, como ayuda imprimimos el valor
+
+```php
+class Register extends BaseController
+{
+    protected $configs;
+
+    public function __construct()
+    {
+        // Creamos un constructor y utilizamos el méotodo config con el nombre de la custom config para acceder a nuestro campo
+        $this->configs = config('CustomBlog');
+    }
+    public function index()
+    {
+        // Simulando un POST
+        $data = [
+            'email' => 'elliot@gmail.com',
+            'password' => '12341234',
+            'name' => 'elliot',
+            'surname' => 'gandarilla',
+            'country_id' => '1',
+        ];
+        // Instanciamos la entidad pasando los datos del form
+        $user = new User($data);
+        // invocamos el método setUsername
+        $user->setUsername();
+        // Imprimimos lo que arroja la entidad
+        d($user);
+        // Imprimimos lo que arroja el CustomBlog
+        d($this->configs);
+        // Acedemos al modelo UsersModel instanciandolo
+        $userModel = new \App\Models\UserModel();
+        // Usamos el método save para insertar los datos a la tabla
+        $userModel->save($user);
+        return view('Auth/register');
+    }
+}
+```
+
+Posterior a esto creamos un modelo para obtener el id de ese valor
+
+```php
+    protected $assignGroup;
+
+    // Creamos un modelo para obtener el id del grupo
+    public function withGroup($group)
+    {
+        $row = $this->db->table('groups')->where('name_group', $group)->get()->getFirstRow();
+        d($row);
+
+        if ($row !== null) {
+            $this->assignGroup = $row->group_id;
+        }
+    }
+```
+
+Por último accedemos al método del modelo para obtener el id en el controlador
+
+```php
+class Register extends BaseController
+{
+    protected $configs;
+
+    public function __construct()
+    {
+        // Creamos un constructor y utilizamos el méotodo config con el nombre de la custom config para acceder a nuestro campo
+        $this->configs = config('CustomBlog');
+    }
+    public function index()
+    {
+        // Simulando un POST
+        $data = [
+            'email' => 'elliot@gmail.com',
+            'password' => '12341234',
+            'name' => 'elliot',
+            'surname' => 'gandarilla',
+            'country_id' => '1',
+        ];
+        // Instanciamos la entidad pasando los datos del form
+        $user = new User($data);
+        // invocamos el método setUsername
+        $user->setUsername();
+        // Imprimimos lo que arroja la entidad
+        d($user);
+        // Imprimimos lo que arroja el CustomBlog
+        d($this->configs);
+        // Acedemos al modelo UsersModel instanciandolo
+        $userModel = new \App\Models\UserModel();
+        // Accedemos al método withGroup y pasamos como parametro el valor que se obtiene en $this->configs->default_group_users
+        d($userModel->withGroup($this->configs->default_group_users));
+        // Usamos el método save para insertar los datos a la tabla
+        $userModel->save($user);
+        return view('Auth/register');
+    }
+}
+```
