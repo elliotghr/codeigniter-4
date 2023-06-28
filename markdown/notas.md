@@ -327,3 +327,85 @@ php spark migrate:refresh
 ```
 
 En caso de error debemos verificar que los atributos de la llave foranea deben estar identicos a la llave primaria de la otra tabla, también debemos tener cuidado en el ordene en el que se refrescan las migraciones
+
+## 10-. [Seeders con faker](https://www.codeigniter.com/user_guide/dbmgmt/seeds.html?highlight=seeder)
+
+Database seeding es una forma sencilla de agregar datos a su base de datos. Es especialmente útil durante el desarrollo en el que necesita llenar la base de datos con datos de muestra contra los que puede desarrollar, pero no se limita a eso. Seeder s puede contener datos estáticos que no desea incluir en una migración, como países o tablas de codificación geográfica, eventos o información de configuración, y más.
+
+Crearemos un seeder con spark, para eso escribiremos el siguiente comando:
+
+```CLI
+php spark make:seeder
+```
+
+Los seeders se alojan en app\Database\Seeds
+Para hacer esto haremos uso de [fakerphp](https://github.com/fzaninotto/Faker), el cual ya viene integrado en CI4, esto lo podemos verificar en composer.json
+
+```php
+    "require-dev": {
+        "fakerphp/faker": "^1.9",
+    }
+```
+
+Ahora generaremos nuestro script en el archivo seeder
+
+```php
+$countries = [];
+
+for ($i = 0; $i < 15; $i++) {
+    $created_at = $faker->dateTime();
+    $updated_at = $faker->dateTimeBetween($created_at);
+    $countries[] = [
+        "name" => $faker->country,
+        "created_at" => $created_at->format('Y-m-d H:i:s'),
+        "updated_at" => $updated_at->format('Y-m-d H:i:s')
+    ];
+}
+```
+
+Tras generar el script para crear nuestros datos fake ahora utilizaremos el siguiente comando para verificarlos en la terminal
+
+```CLI
+php spark db:seed InitSeeder
+```
+
+## 11-. [Nesting Seeders](https://www.codeigniter.com/user_guide/database/query_builder.html?highlight=query%20builder#insertbatch)
+
+CodeIgniter le da acceso a una clase de Query Builder. Este patrón permite que la información se recupere, inserte y actualice en su base de datos con un mínimo de secuencias de comandos. En algunos casos, solo se necesitan una o dos líneas de código para realizar una acción de base de datos. CodeIgniter no requiere que cada tabla de la base de datos sea su propio archivo de clase. En cambio, proporciona una interfaz más simplificada.
+
+Query Builder se carga a través del método en la conexión de la base de datos . Esto establece la parte DESDE de la consulta por usted y devuelve una nueva instancia de la clase Query Builder:table()
+
+```php
+$builder = $db->table('users');
+```
+
+Query Builder solo se carga en la memoria cuando solicita específicamente la clase, por lo que no se utilizan recursos de forma predeterminada.
+
+Hacemos uso de nuestro query builder haciendo referencia a la tabla a insertar
+Posteriormente usamos el método insertBatch para insertar múltiples datos
+
+```php
+// use the factory to create a Faker\Generator instance
+$faker = Factory::create();
+// Declaramos un array que contendrá los datos
+$countries = [];
+
+for ($i = 0; $i < 15; $i++) {
+    $created_at = $faker->dateTime();
+    $updated_at = $faker->dateTimeBetween($created_at);
+    $countries[] = [
+        "name" => $faker->country,
+        "created_at" => $created_at->format('Y-m-d H:i:s'),
+        "updated_at" => $updated_at->format('Y-m-d H:i:s')
+    ];
+}
+// d es como un vardump pero proporcionado por CI
+// d($countries);
+
+// Usando un query builder hacemos referencia a la tabla countries
+$builder = $this->db->table('countries');
+
+// Con el método insertBatch generamos un insert múltiple de un array
+$builder->insertBatch($countries);
+```
+También podemos crear seeder independientes y llamarlos desde un seeder main, para tener un mejor orden.
