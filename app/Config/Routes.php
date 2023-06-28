@@ -39,6 +39,10 @@ $routes->group('home', ["namespace" => "App\Controllers\Front"], function ($rout
     $routes->get('/', 'Home::index');
 });
 
+$routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($routes) {
+    $routes->get('login', 'Register::index');
+});
+
 
 /*
  * --------------------------------------------------------------------

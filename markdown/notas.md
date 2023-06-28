@@ -408,4 +408,67 @@ $builder = $this->db->table('countries');
 // Con el método insertBatch generamos un insert múltiple de un array
 $builder->insertBatch($countries);
 ```
+
 También podemos crear seeder independientes y llamarlos desde un seeder main, para tener un mejor orden.
+
+## [Entidades parte 1](https://www.codeigniter.com/user_guide/models/entities.html?highlight=entities)
+
+CodeIgniter admite clases de Entidad como un ciudadano de primera clase en su capa de base de datos, al tiempo que mantiene su uso completamente opcional. Se usan comúnmente como parte del patrón Repositorio, pero se pueden usar directamente con el Modelo si se ajusta mejor a sus necesidades.
+
+Dado que no hay una ubicación predeterminada para almacenar estas clases y no encaja con la estructura de directorios existente, cree un nuevo directorio en app/ Entities . Cree la propia Entidad en app/ Entities /User.php .
+
+```php
+namespace App\Entities;
+
+use CodeIgniter\Entity\Entity;
+
+class User extends Entity
+{
+    // ...
+}
+
+```
+
+Simulando un inicio de sesión en el controlador Register.php seteamos la entidad con los datos del POST simulado
+
+```php
+namespace App\Controllers\Auth;
+
+use App\Controllers\BaseController;
+use App\Entities\User;
+
+class Register extends BaseController
+{
+    public function index()
+    {
+        // Simulando un POST
+        $data = [
+            'email' => 'elliot@gmail.com',
+            'password' => '12341234',
+            'name' => 'elliot',
+            'surname' => 'gandarilla',
+            'country_id' => '1',
+        ];
+        // Instanciamos la entidad pasando los datos del form
+        $user = new User($data);
+        // Imprimimos lo que arroja la entidad
+        d($user);
+        return view('Auth/register');
+    }
+
+    public function store()
+    {
+        return view('');
+    }
+}
+```
+
+![Entidades ](./assets/entity.png)
+
+Aqui podemos ver que la entidad ya obtiene los datosd el formulario, además de sus métodos y propiedades propios
+
+## 13-. Entidades Parte 2
+
+En la entidad hacemos uso de los date Mutators, de forma predeterminada, la clase Entity convertirá los campos denominados created_at , updated_at o delete_at en instancias de tiempo cada vez que se establezcan o recuperen.
+Además de usar la lógica de negocio, con ayuda de los métodos set y get retornando el atributo aplicando cualquier lógica comercial o conversión de datos que necesite.
+Con todo esto podremos devoler los datos en el controlador de la manera en que deseemos.
