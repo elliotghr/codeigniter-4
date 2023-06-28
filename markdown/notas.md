@@ -25,7 +25,7 @@ En la estructura del proyecto podemos ver un archivo env. Todos los frameworks m
 
 CI nos proporciona este template y de momento realizaremos ciertas configuraciones
 
-```env
+```conf
 # ENVIRONMENT
 #--------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ Al estar en development podemos acceder a ciertas herramientas
 
 Aqui podemos ver en que vista estamos, los tiempos de carga de los archivos, los archivos que se obtienen, las rutas, los eventos, un historial de peticiones y por último las variables que recibimos al cargar la vista, variables de sesión, consultas, etc.
 
-## 4-. Controladores y PSR-4
+## 4-. [Controladores y PSR-4](https://www.codeigniter.com/user_guide/incoming/controllers.html)
 
 Dentro de app\Controllers almacenaremos nuestros controlador.
 Contamos con un BaseController que pertenece al core de CI. Aqui podemos cargar helpers, podemos pre cargar modelos, librerías, etc.
@@ -107,7 +107,7 @@ class Home extends BaseController
 
 De esta manera podemos crear modulos y utilizarlos en cualquier parte de nuestra aplicación, facilitando el uso de componentes y agilizando el desarollo
 
-## 5-. Rutas
+## 5-. [Rutas](https://www.codeigniter.com/user_guide/incoming/routing.html)
 
 La definición de las rutas las encotramos en app\Config\Routes.php
 Tenemos dos tipos de enrutamiento. Uno es Enrutamiento de ruta definida y el otro es Enrutamiento automático . Con Enrutamiento de ruta definida, puede definir rutas manualmente. Permite URL flexible. El enrutamiento automático enruta automáticamente las solicitudes HTTP según las convenciones y ejecuta los métodos de controlador correspondientes. No hay necesidad de definir rutas manualmente.
@@ -188,7 +188,7 @@ Y se estará renderizando el método index
 Generamos vistas en la carpeta app\Views y las renderizamos en el controlador con el método view();
 Es preferible agrupar las vistas en carpetas para tener un mayor orden
 
-## 7-. Layouts [docs](https://www.codeigniter.com/user_guide/outgoing/view_layouts.html?highlight=rendersection)
+## 7-. [Layouts](https://www.codeigniter.com/user_guide/outgoing/view_layouts.html?highlight=rendersection)
 
 Los Layouts nos sirven para modularizar y reutilizar elementos en diferentes vistas
 Vamos a separar el header y el footer, además tendremos un main que renderizará todo el contenido HMTL
@@ -246,3 +246,67 @@ Ahora en nuestra vista home.php vamos a definir los contenidos dinamicos
   ```
 
 Con esto estaremos reutilizando layouts en nuestras vistas, obteniendo archivos HTML estaticos y también renderizando estructuras dinamicas
+
+## 8-. [Migraciones](https://www.codeigniter.com/user_guide/dbmgmt/migration.html)
+
+Las migraciones son una forma conveniente de modificar su base de datos de manera estructurada y organizada. Podría editar fragmentos de SQL a mano, pero luego sería responsable de decirles a otros desarrolladores que necesitan ir y ejecutarlos. También tendría que realizar un seguimiento de los cambios que deben ejecutarse en las máquinas de producción la próxima vez que implemente.
+
+Las migraciones de la tabla de la base de datos rastrean qué migraciones ya se han ejecutado, por lo que todo lo que tiene que hacer es asegurarse de que sus migraciones estén en su lugar y llamar $migration->latest()para actualizar la base de datos al estado más reciente. También puede usar $migration->setNamespace(null)->latest()para incluir migraciones de todos los espacios de nombres.
+
+Las migraciones se almacenan en la ruta: app/Database/Migrations/
+
+Para crear una ruta en Laragon por terminal de comandos escribiremos los siguientes comandos:
+
+```CLI
+php spark make:migration
+```
+
+Posterior a esto escrbiiremos el nombre de la clase y tendremos nuestro archivo creado:
+
+```php
+namespace App\Database\Migrations;
+
+use CodeIgniter\Database\Migration;
+
+class Countries extends Migration
+{
+    public function up()
+    {
+        //
+    }
+
+    public function down()
+    {
+        //
+    }
+}
+```
+
+El metodo up sirve para crear nuestra tabla
+El metodo down sirve para las instrucciones de eliminar o hacer un rollback de la tabla
+
+Ahora, en nuestro administrador de Laragon crearemos una DB en blanco antes de trabajar con las Migraciones:
+
+![DB](./assets/db.png)
+
+En nuestro archivo .evn especificamos los datos de la DB
+
+```conf
+ database.default.hostname = localhost
+ database.default.database = blog
+ database.default.username = root
+ database.default.password =
+ database.default.DBDriver = MySQLi
+```
+
+Una vez que definamos la estructura de nuestra tabla en la migración dentro de los métodos up() y down() creamos la migración en la terminal de laragon con el comando
+
+```CLI
+php spark migrate
+```
+
+Si todo sale correcto obtendremos lo siguiente:
+
+![create migrate](./assets/migrate.png)
+
+Con esto habremos creado nuestra tabla
