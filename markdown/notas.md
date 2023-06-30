@@ -749,7 +749,7 @@ class UsersInfoModel extends Model
 
 Ahora en el modelo haremos 2 cosas
 
-1. Creamos una función  addInfoUser() en nuestro modelo que recibirá el dominio de la entidad UserInfo
+1. Creamos una función addInfoUser() en nuestro modelo que recibirá el dominio de la entidad UserInfo
 
 ```php
     protected $infoUser;
@@ -791,3 +791,138 @@ La callback se ejecutará después de la inserción en nuestra primera tabla.
 - Rcuperaremos el id
 - Haremos instancia del modelo de la segunda tabla
 - Finalmente insertaremos
+
+## 18-. Vista de registro de usuarios
+
+Trabajando en la vista generamos los links a las diferentes secciones de nuestra aplicación, sin emabargo, los slugs de nuestra aplicación pueden cambiar, una manera de prevenir estos cambios es con las [redirecciones de rutas](https://www.codeigniter.com/user_guide/incoming/routing.html#redirecting-routes)
+
+Actualmente nuestras rutas están de la siguiente manera:
+
+```php
+$routes->group('home', ["namespace" => "App\Controllers\Front"], function ($routes) {
+    $routes->get('/', 'Home::index');
+});
+
+$routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($routes) {
+    $routes->get('registro', 'Register::index');
+});
+```
+
+Si llega a haber un cambio en los slugs (/, registro), tendremos que cambiar esto en nuestro métodos de redirección
+
+```php
+    <!-- Hero footer: will stick at the bottom -->
+    <div class="hero-foot">
+        <nav class="tabs is-boxed is-fullwidth">
+            <div class="container">
+                <ul>
+                    <li class="is-active"><a href="<?= base_url('home/') ?>">Inicio</a></li> // cambio aqui
+                    <li><a href="<?= base_url('auth/registro') ?>">Registro</a></li> // y aqui
+                    <li><a>Ingreso</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+```
+
+Sin embargo, si en las rutas pasamos un tercer parametro, el cual es un array asociativo con clave as, aún cambiando el slug se mantendrá la redirección a nuestra página gracias al alias
+
+```php
+$routes->group('home', ["namespace" => "App\Controllers\Front"], function ($routes) {
+    $routes->get('/', 'Home::index', ['as' => 'home']); // con alias
+});
+
+$routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($routes) {
+    $routes->get('registro', 'Register::index', ['as' => 'register']); // con alias
+});
+```
+
+Y el atributo href de nuestros links quedaría de la siguiente manera, usando la misma base_url pero con un método route_to() a nuestro alias:
+
+```php
+    <!-- Hero footer: will stick at the bottom -->
+    <div class="hero-foot">
+        <nav class="tabs is-boxed is-fullwidth">
+            <div class="container">
+                <ul>
+                    <li class="is-active"><a href="<?= base_url(route_to('home')) ?>">Inicio</a></li>
+                    <li><a href="<?= base_url(route_to('register')) ?>">Registro</a></li>
+                    <li><a>Ingreso</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+```
+
+## 19-. Menus y Dropdowns
+
+Generamos un condicional para el header, todo esto haciendo uso de la clase IncomingRequest
+
+La clase IncomingRequest proporciona una representación orientada a objetos de una solicitud HTTP de un cliente, como un navegador. Se extiende y tiene acceso a todos los métodos de las clases Solicitud y Mensaje , además de los métodos que se enumeran a continuación.
+
+Para esto haremos uso de los métodos The Request URL
+
+Puede recuperar un objeto URI que represente el URI actual para esta solicitud a través del método $request->getUri(). Puede convertir este objeto como una cadena para obtener una URL completa para la solicitud actual:
+
+```php
+$uri = (string) $request->getUri();
+```
+
+El objeto le brinda capacidades completas para capturar cualquier parte de la solicitud por sí mismo:
+
+```php
+$uri = $request->getUri();
+
+echo $uri->getScheme();         // http
+echo $uri->getAuthority();      // snoopy:password@example.com:88
+echo $uri->getUserInfo();       // snoopy:password
+echo $uri->getHost();           // example.com
+echo $uri->getPort();           // 88
+echo $uri->getPath();           // path/to/page
+echo $uri->getQuery();          // foo=bar&bar=baz
+print_r($uri->getSegments());   // Array ( [0] => path [1] => to [2] => page )
+echo $uri->getSegment(1);       // path
+echo $uri->getTotalSegments();  // 3
+```
+
+Con esto podemos hacer el renderizado condicional de la clase active
+
+```php
+// En header.php
+    <ul>
+        <!-- Creamos validaciones para la clase active -->
+        <li class="<?= service('request')->getUri()->getPath() == 'home' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('home')) ?>">Inicio</a></li>
+        <li class="<?= service('request')->getUri()->getPath() == 'auth/registro' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('register')) ?>">Registro</a></li>
+        <li><a>Ingreso</a></li>
+    </ul>
+```
+
+Creamos un modelo y traemos los datos de los paises para renderizarlos en la vista
+
+```php
+    public function index()
+    {
+        // Hacemos uso del modelo CountriesModel
+        $countries = model('CountriesModel');
+        // Enviamos los datos a al vista
+        $data['paises'] = $countries->findAll();
+
+        return view('Auth/register', $data);
+    }
+```
+
+Por último lo renderizamos en nuestra vista
+
+```php
+<select name="country_id">
+    <option value="">Elige un país</option>
+    <!-- Renderizamos los datos de los paises -->
+    <?php
+    foreach ($paises as $pais) {
+        echo '
+            <option value="' . $pais['country_id'] . '">' . $pais['name'] . '</option>
+            ';
+    }
+    ?>
+</select>
+```

@@ -36,11 +36,11 @@ $routes->set404Override();
 // El prefijo aparecerá antes de cada ruta definida
 // dentro de los corchetes podemos definir un namespace (en donde buscará los controladores)
 $routes->group('home', ["namespace" => "App\Controllers\Front"], function ($routes) {
-    $routes->get('/', 'Home::index');
+    $routes->get('/', 'Home::index', ['as' => 'home']);
 });
 
 $routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($routes) {
-    $routes->get('login', 'Register::index');
+    $routes->get('registro', 'Register::index', ['as' => 'register']);
 });
 
 

@@ -17,6 +17,7 @@
     <!-- renderSection actúa como un marcador de posición para el contenido -->
     <?= $this->renderSection('content') ?>
     <?= $this->include('Front/layout/footer.php') ?>
+    <script src="https://kit.fontawesome.com/55da5f9fc2.js" crossorigin="anonymous"></script>
 </body>
 
 </html>

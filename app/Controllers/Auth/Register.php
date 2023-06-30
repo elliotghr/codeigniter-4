@@ -17,8 +17,18 @@ class Register extends BaseController
         $this->configs = config('CustomBlog');
     }
 
-
     public function index()
+    {
+        // Hacemos uso del modelo CountriesModel
+        $countries = model('CountriesModel');
+        // Enviamos los datos a al vista
+        $data['paises'] = $countries->findAll();
+
+        return view('Auth/register', $data);
+    }
+
+
+    public function store()
     {
         // Simulando un POST
         $data = [
@@ -48,11 +58,5 @@ class Register extends BaseController
         // Usamos el método save para insertar los datos a la tabla
         $userModel->save($user);
         return view('Auth/register');
-    }
-
-
-    public function store()
-    {
-        return view('');
     }
 }
