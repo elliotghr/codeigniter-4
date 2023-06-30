@@ -965,3 +965,41 @@ if (!$validation->withRequest($this->request)->run()) {
     return;
 }
 ```
+
+## 21-. Imprimir errores
+
+Para imprimir nuestros errores primero generamos una redirección hacia atrás con los valores almacenados, esto lo generamos con los siguientes métodos
+
+```php
+// Creamos una condicional si obtenemos errores
+if (!$validation->withRequest($this->request)->run()) {
+    // dd($validation->getErrors());
+    // Generamos una redirección con el valor de los inputs
+    return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+}
+```
+
+Esto generará un array por parte de CI para poder recuperar los mensajes de error y poder mostrarlos en nuestra vista junto a los valores anteriores de los inputs
+
+```php
+<div class="field">
+    <label class="label">Nombre</label>
+    <div class="control">
+        <input class="input" type="text" placeholder="" name="name" value="<?= old('name') ?>"> // imprimimos el input anterior
+    </div>
+    // Accediendo a los valores de la sesión que tienen los errores
+    <p class="is-danger help"><?= session('errors.name') ?></p>
+</div>
+```
+
+Posterior a esto tenemos todo listo para generar nuestra incerción de datos, pasamos la request conn los valores de POST:
+
+```php
+$user = new User($this->request->getPost());
+```
+
+Por último y cuando todo está correcto generamos un redirect a la ruta que deseemos, en nuestro caso a otra vista que generaremos
+
+```php
+return redirect()->route('login')->with('msg', 'Usuario registrado con éxito');
+```

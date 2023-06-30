@@ -44,8 +44,8 @@ class Register extends BaseController
 
         // Preparemos nuestras reglas para los campos
         $validation->setRules([
-            'name' => 'required|alpha_space',
-            'surname' => 'required|alpha_space',
+            'name' => 'required',
+            'surname' => 'required',
             'email' => 'required|valid_email|is_unique[users.email]',
             'password' => 'required|matches[c-password]',
             'country_id' => 'required|is_not_unique[countries.country_id]',
@@ -53,11 +53,12 @@ class Register extends BaseController
 
         // Creamos una condicional si obtenemos errores
         if (!$validation->withRequest($this->request)->run()) {
-            dd($validation->getErrors());
-            return;
+            // dd($validation->getErrors());
+            // Generamos una redirección con el valor de los inputs
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
-        // Instanciamos la entidad pasando los datos del form
-        $user = new User($data);
+        // Instanciamos la entidad pasando los datos de la request que vienen por POST
+        $user = new User($this->request->getPost());
         // invocamos el método setUsername
         $user->setUsername();
         // Imprimimos lo que arroja la entidad
@@ -70,11 +71,13 @@ class Register extends BaseController
         $userModel->withGroup($this->configs->default_group_users);
 
         // Instanciamos UserInfo y le pasamos los datos
-        $userInfo = new UserInfo($data);
+        $userInfo = new UserInfo($this->request->getPost());
         $userModel->addInfoUser($userInfo);
 
         // Usamos el método save para insertar los datos a la tabla
         $userModel->save($user);
-        return view('Auth/register');
+        // return view('Auth/register');
+        // Generamos un redirect a una ruta especifica
+        return redirect()->route('login')->with('msg', 'Usuario registrado con éxito');
     }
 }
