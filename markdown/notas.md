@@ -698,3 +698,96 @@ Para posteriormente crear la callback
 ```
 
 Una vez hecho esto, antes de un insert se va a ejectuar nuestra callback addGroup y asignará el valor del group
+
+## 17-. Guardar Tablas Relacionadas
+
+Crearemos un flujo para setear la información en la segunda tabla. Hasta el momento solo insertamos datos en la tabla Users, sin embargo, un par de datos de ese mismo POST se deben insertar en la tabla info_users, para esto haremos uso de las entidades y del Modelo junto con sus callbacks.
+
+Primero creamos una entidad para aplicar un date Mutator a los campos "created_at" y "updated_at"
+
+```php
+namespace App\Entities;
+
+use CodeIgniter\Entity\Entity;
+
+class UserInfo extends Entity
+{
+    // Hacemos uso de un date Mutator
+    protected $dates = ['created_at', 'updated_at'];
+}
+```
+
+Posteriormente la invocamos en el Controlador y le pasamos los datos
+
+```php
+    // Instanciamos UserInfo y le pasamos los datos
+    $userInfo = new UserInfo($data);
+```
+
+Ahora crearemos un modelo que haga referencia a la segunda tabla (info_users) para posteriormente hacer un insert a dicha tabla
+
+```php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class UsersInfoModel extends Model
+{
+    protected $table            = 'info_users';
+    protected $primaryKey       = 'user_id';
+    protected $useAutoIncrement = true;
+    protected $returnType       = 'array';
+    protected $useSoftDeletes   = false;
+    protected $allowedFields    = ['user_id', 'name', 'surname', 'country_id'];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+}
+```
+
+Ahora en el modelo haremos 2 cosas
+
+1. Creamos una función  addInfoUser() en nuestro modelo que recibirá el dominio de la entidad UserInfo
+
+```php
+    protected $infoUser;
+
+    public function addInfoUser($ui)
+    {
+        $this->infoUser = $ui;
+    }
+```
+
+En nuestro controlador le pasamos los datos de la entidad a dicho método
+
+```php
+    // Instanciamos UserInfo y le pasamos los datos
+    $userInfo = new UserInfo($data);
+    $userModel->addInfoUser($userInfo);
+```
+
+2. Crearemos una función para insertar los datos en la segunda tabla (info_users). Primero crearemos una callback con su respectiva función
+
+```php
+    // Especificamos en que momento se ejecutará la callback
+    protected $afterInsert = ['storeUserInfo'];
+
+    protected $infoUser;
+
+    public function storeUserInfo($data)
+    {
+        $this->infoUser->user_id = $data['id'];
+        $model = model('UsersInfoModel');
+        $model->insert($this->infoUser);
+        return $data;
+    }
+```
+
+La callback se ejecutará después de la inserción en nuestra primera tabla.
+
+- Esta función recibirá los datos insertados
+- Rcuperaremos el id
+- Haremos instancia del modelo de la segunda tabla
+- Finalmente insertaremos

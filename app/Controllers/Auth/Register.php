@@ -4,7 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
 use App\Entities\User;
-use App\Models\UserModel;
+use App\Entities\UserInfo;
 
 class Register extends BaseController
 {
@@ -22,10 +22,10 @@ class Register extends BaseController
     {
         // Simulando un POST
         $data = [
-            'email' => 'nano@gmail.com',
+            'email' => 'mosho@gmail.com',
             'password' => '12341234',
-            'name' => 'nano',
-            'surname' => 'banano',
+            'name' => 'mosho',
+            'surname' => 'chisti',
             'country_id' => '1',
         ];
         // Instanciamos la entidad pasando los datos del form
@@ -33,13 +33,18 @@ class Register extends BaseController
         // invocamos el método setUsername
         $user->setUsername();
         // Imprimimos lo que arroja la entidad
-        d($user);
+        // d($user);
         // Imprimimos lo que arroja el CustomBlog
         d($this->configs);
         // Acedemos al modelo UsersModel instanciandolo
         $userModel = new \App\Models\UserModel();
         // Accedemos al método withGroup y pasamos como parametro el valor que se obtiene en $this->configs->default_group_users
         $userModel->withGroup($this->configs->default_group_users);
+
+        // Instanciamos UserInfo y le pasamos los datos
+        $userInfo = new UserInfo($data);
+        $userModel->addInfoUser($userInfo);
+
         // Usamos el método save para insertar los datos a la tabla
         $userModel->save($user);
         return view('Auth/register');

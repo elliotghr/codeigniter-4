@@ -25,8 +25,10 @@ class UserModel extends Model
 
     // Especificamos en que momento se ejecutará la callback
     protected $beforeInsert = ['addGroup'];
+    protected $afterInsert = ['storeUserInfo'];
 
     protected $assignGroup;
+    protected $infoUser;
 
     // Creamos un modelo para nuestro callback
     public function addGroup($data)
@@ -46,5 +48,16 @@ class UserModel extends Model
         if ($row !== null) {
             $this->assignGroup = $row->group_id;
         }
+    }
+    public function storeUserInfo($data)
+    {
+        $this->infoUser->user_id = $data['id'];
+        $model = model('UsersInfoModel');
+        $model->insert($this->infoUser);
+        return $data;
+    }
+    public function addInfoUser($ui)
+    {
+        $this->infoUser = $ui;
     }
 }
