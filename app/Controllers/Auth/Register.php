@@ -31,13 +31,31 @@ class Register extends BaseController
     public function store()
     {
         // Simulando un POST
-        $data = [
-            'email' => 'mosho@gmail.com',
-            'password' => '12341234',
-            'name' => 'mosho',
-            'surname' => 'chisti',
-            'country_id' => '1',
-        ];
+        // $data = [
+        //     'email' => 'mosho@gmail.com',
+        //     'password' => '12341234',
+        //     'name' => 'mosho',
+        //     'surname' => 'chisti',
+        //     'country_id' => '1',
+        // ];
+
+        // Cargamos la biblioteca de validaciones
+        $validation = \Config\Services::validation();
+
+        // Preparemos nuestras reglas para los campos
+        $validation->setRules([
+            'name' => 'required|alpha_space',
+            'surname' => 'required|alpha_space',
+            'email' => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|matches[c-password]',
+            'country_id' => 'required|is_not_unique[countries.country_id]',
+        ]);
+
+        // Creamos una condicional si obtenemos errores
+        if (!$validation->withRequest($this->request)->run()) {
+            dd($validation->getErrors());
+            return;
+        }
         // Instanciamos la entidad pasando los datos del form
         $user = new User($data);
         // invocamos el método setUsername

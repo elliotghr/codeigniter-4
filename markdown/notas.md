@@ -926,3 +926,42 @@ Por último lo renderizamos en nuestra vista
     ?>
 </select>
 ```
+
+## 20-. [Validaciones](https://www.codeigniter.com/user_guide/libraries/validation.html?highlight=validate)
+
+CodeIgniter proporciona una clase de validación de datos integral que ayuda a minimizar la cantidad de código que escribirá.
+
+En nuestro controlador cargamos la biblioteca de validaciones
+
+```php
+$validation = \Config\Services::validation();
+```
+
+Posterior a esto creamos nuestras reglas de validacion haciendo uso del método setRules()
+
+```php
+    // Preparemos nuestras reglas para los campos
+    $validation->setRules([
+        'name' => 'required|alpha_space',
+        'surname' => 'required|alpha_space',
+        'email' => 'required|valid_email|is_unique[users.email]',
+        'password' => 'required|matches[c-password]',
+        'country_id' => 'required|is_not_unique[countries.country_id]',
+    ]);
+```
+
+Ahora haremos uso del método withRequest().
+
+Uno de los momentos más comunes en los que usará la biblioteca de validación es al validar datos que se ingresaron desde una solicitud HTTP. Si lo desea, puede pasar una instancia del objeto current Request y tomará todos los datos de entrada y los configurará como los datos que se validarán:
+
+En nuestro código crearemos una condicional para mostrar los errores
+
+```php
+// Creamos una condicional si obtenemos errores
+if (!$validation->withRequest($this->request)->run()) {
+    // De momento solo los imprimimos para verificar su funcionamiento
+    // Usamos el método getErrors() para moestrar los mensajes de la validación
+    dd($validation->getErrors());
+    return;
+}
+```
