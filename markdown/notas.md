@@ -1003,3 +1003,7 @@ Por último y cuando todo está correcto generamos un redirect a la ruta que des
 ```php
 return redirect()->route('login')->with('msg', 'Usuario registrado con éxito');
 ```
+
+## 22-. Vista Login
+
+Generamos los archivos para renderizar nuestra vista de Login

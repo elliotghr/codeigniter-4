@@ -58,7 +58,7 @@
                     <!-- Creamos validaciones para la clase active -->
                     <li class="<?= service('request')->getUri()->getPath() == 'home' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('home')) ?>">Inicio</a></li>
                     <li class="<?= service('request')->getUri()->getPath() == 'auth/registro' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('register')) ?>">Registro</a></li>
-                    <li><a>Ingreso</a></li>
+                    <li class="<?= service('request')->getUri()->getPath() == 'auth/login' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('login')) ?>">Ingreso</a></li>
                 </ul>
             </div>
         </nav>
