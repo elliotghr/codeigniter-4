@@ -2,7 +2,6 @@
 
 <?= $this->extend('Front/Layout/main') ?>
 <?= $this->section('content') ?>
-<?= session('msg') ?>
 <section class="section">
     <div class="container">
         <section class="section">
@@ -11,31 +10,27 @@
                 Ingresa al sistema ahora
             </h2>
         </section>
-        <form action="" method="POST">
+        <?= session('msg') ?>
+        <form action="<?= base_url('auth/check') ?>" method="POST">
             <div class="field">
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input" type="email" placeholder="Email">
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-envelope"></i>
-                    </span>
-                    <span class="icon is-small is-right">
-                        <i class="fas fa-check"></i>
-                    </span>
+                    <input class="input" type="email" placeholder="Email" name="email" value="<?= old('email') ?>">
                 </p>
+                <p class="is-danger help"><?= session('errors.email') ?></p>
             </div>
             <div class="field">
                 <p class="control has-icons-left">
-                    <input class="input" type="password" placeholder="Password">
+                    <input class="input" type="password" placeholder="Password" name="password">
                     <span class="icon is-small is-left">
                         <i class="fas fa-lock"></i>
                     </span>
                 </p>
+                <p class="is-danger help"><?= session('errors.password') ?></p>
             </div>
             <div class="field">
                 <p class="control">
-                    <button class="button is-success">
-                        Login
-                    </button>
+                    <input type="submit" class="button is-success" value="Login">
+                    </input>
                 </p>
             </div>
         </form>

@@ -1007,3 +1007,24 @@ return redirect()->route('login')->with('msg', 'Usuario registrado con éxito');
 ## 22-. Vista Login
 
 Generamos los archivos para renderizar nuestra vista de Login
+
+## 23-. Validaciones
+
+Obtenemos los datos enviados por el formulario y creamos sus validaciones
+
+En este caso no utilizaremos getRules para establecer las validaciones ni el método withRequest() para correr las validaciones, usaremos el método validate dentro de un if para validarlas
+
+```php
+        // Creamos un array de validaciones
+        $validaciones = [
+            'email' => 'required|valid_email',
+            'password' => 'required'
+        ];
+
+        // Con validate validamos las acciones que vienen en el request, sin necesidad de hacer la instancia, el setRules
+        if (!$this->validate($validaciones)) {
+            return redirect()->back()->with('errors', $this->validator->getErrors())->withInput();
+        }
+```
+
+Por último imprimimos los mensajes de error en la vista
