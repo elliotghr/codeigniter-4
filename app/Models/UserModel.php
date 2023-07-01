@@ -60,4 +60,10 @@ class UserModel extends Model
     {
         $this->infoUser = $ui;
     }
+
+    // Generamos una función para obtener un usuario
+    public function getUserBy($column, $value)
+    {
+        return $this->where($column, $value)->get()->getResult();
+    }
 }

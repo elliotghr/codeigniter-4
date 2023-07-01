@@ -10,7 +10,15 @@
                 Ingresa al sistema ahora
             </h2>
         </section>
-        <?= session('msg') ?>
+        <?php if (session('msg')) { ?>
+            <section class="section">
+                <article class="message <?= session('msg.type') ?>">
+                    <div class="message-body">
+                        <?= session('msg.body') ?>
+                    </div>
+                </article>
+            </section>
+        <?php } ?>
         <form action="<?= base_url('auth/check') ?>" method="POST">
             <div class="field">
                 <p class="control has-icons-left has-icons-right">

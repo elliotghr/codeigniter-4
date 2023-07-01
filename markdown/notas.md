@@ -1028,3 +1028,64 @@ En este caso no utilizaremos getRules para establecer las validaciones ni el mé
 ```
 
 Por último imprimimos los mensajes de error en la vista
+
+## 24-. Autenticación
+
+Para generar la autenticación primero recibimos los datos
+
+```php
+// Obtenemos y limpiamos los valores
+$email = trim($this->request->getVar('email'));
+$password = trim($this->request->getVar('password'));
+```
+
+En el modelo creamos un método para validaro la existencia del correo
+
+```php
+    // Generamos una función para obtener un usuario
+    public function getUserBy($column, $value)
+    {
+        return $this->where($column, $value)->get()->getResult();
+    }
+```
+
+En el controlador llamaremos a nuestro modelo y haremos uso del método para retornar un error si no se encuentra el email
+
+```php
+// Llamamos al modelo
+$model = model('UserModel');
+
+// Llamamos al método del modelo que traerá o no los datos
+if (!$user = $model->getUserBy('email', $email)) {
+    return redirect()->back()->with('msg', [
+        'type' => 'is-danger',
+        'body' => 'Este usuario no se encuentra registrado en el sistema',
+    ]);
+}
+```
+
+Posterior a esto validamos el password
+
+```php
+if (!password_verify($password, $user[0]->password)) {
+    return redirect()->back()->with('msg', [
+        'type' => 'is-danger',
+        'body' => 'Credenciales invalidas',
+    ]);
+}
+```
+
+En nuestra vista preparamos una sección HTML para mosrtar los errores del array msg que estamos enviando
+Si en la variable de sesión existe el array msg, entonces, renderizamos el type y el body
+
+```html
+<?php if (session('msg')) { ?>
+<section class="section">
+  <article class="message <?= session('msg.type') ?>">
+    <div class="message-body">
+      <?= session('msg.body') ?>
+    </div>
+  </article>
+</section>
+<?php } ?>
+```

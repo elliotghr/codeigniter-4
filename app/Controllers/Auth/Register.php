@@ -78,6 +78,10 @@ class Register extends BaseController
         $userModel->save($user);
         // return view('Auth/register');
         // Generamos un redirect a una ruta especifica
-        return redirect()->route('login')->with('msg', 'Usuario registrado con éxito');
+        // return redirect()->route('login')->with('msg', 'Usuario registrado con éxito');
+        return redirect()->route('login')->with('msg', [
+            'type' => 'success',
+            'body' => 'Usuario registrado con éxito',
+        ]);
     }
 }
