@@ -48,7 +48,8 @@ $routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($route
 });
 
 // Agregamos un filtro a este grupo
-$routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'auth'], function ($routes) {
+// Pasamos los argumentos al filtro de auth
+$routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'auth:admin'], function ($routes) {
     $routes->get('articulos', 'Posts::index', ['as' => 'posts']);
 });
 /*

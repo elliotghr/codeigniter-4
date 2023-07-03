@@ -1254,3 +1254,68 @@ $routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'au
     $routes->get('articulos', 'Posts::index', ['as' => 'posts']);
 });
 ```
+
+## 28-. Roles y Privilegios
+
+En nuestro Filtro Auth creamos una validación verificando quie exista nuestro usuario
+
+```php
+    public function before(RequestInterface $request, $arguments = null)
+    {
+        // Si no está logueado mandamos un redirect con un mensaje
+        if (!session()->is_logged) {
+            return redirect()->route('login')->with('msg', [
+                'type' => 'warning',
+                'body' => 'Para acceder primero debe logear su cuenta',
+            ]);
+        }
+
+        // Creamos una validación para verificar que el usuario exista
+        $model = model('UserModel');
+        // En caso de que no exista destruimos la sesión y redirigimos al login
+        if (!$user = $model->getUserBy('id', session()->user_id)) {
+            session()->destroy();
+            return redirect()->route('login')->with('msg', [
+                'type' => 'danger',
+                'body' => 'El usuario actualmente no está disponible',
+            ]);
+        }
+        dd($user);
+    }
+```
+
+Ahora, vamos a hacer uso de los roles y privilegios, esto lo haremos especificando los valores en el filtro de la ruta
+
+```php
+// Agregamos un filtro a este grupo
+// Pasamos los argumentos al filtro de auth
+$routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'auth:admin'], function ($routes) {
+    $routes->get('articulos', 'Posts::index', ['as' => 'posts']);
+});
+```
+
+En nuestro Filtro recibimos esos argumentos, depurandolos de momento
+
+```php
+    public function before(RequestInterface $request, $arguments = null)
+    {
+        // Si depuramos los argumentos recibidos a nuestro filtro podremos ver los 2 roles que indicamos en nuestra Route
+        dd($arguments);
+        // Resto de códgio....
+    }
+```
+
+Creamos un Modelo para obtener los grupos y comprar el grupo que tiene el usuario contra el grupo que aceptamos en el argumento del Route
+
+```php
+// Accedemos al modelo groupsModel
+$groups_model = model('GroupsModel');
+// Obtenemos los datos del grupo del usuario
+$group_data = $groups_model->where('group_id', $user[0]->group)->get()->getResult();
+// Si el rol no se encuentra con los argumentos que definimos en la Route mandamos un error 404
+if (!in_array($group_data[0]->name_group, $arguments)) {
+    throw PageNotFoundException::forPageNotFound();
+}
+```
+
+Si todo está correcto accederá sin problemas a las rutas de ese grupo, en caso contrario mandará ese 404
