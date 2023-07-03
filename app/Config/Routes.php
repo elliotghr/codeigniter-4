@@ -44,9 +44,12 @@ $routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($route
     $routes->post('store', 'Register::store');
     $routes->get('login', 'Login::index', ['as' => 'login']);
     $routes->post('check', 'Login::signin');
+    $routes->get('signout', 'Login::signout', ['as' => 'signout']);
 });
 
-
+$routes->group('admin', ["namespace" => "App\Controllers\Admin"], function ($routes) {
+    $routes->get('articulos', 'Posts::index', ['as' => 'posts']);
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing

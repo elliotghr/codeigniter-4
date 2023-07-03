@@ -1089,3 +1089,90 @@ Si en la variable de sesión existe el array msg, entonces, renderizamos el type
 </section>
 <?php } ?>
 ```
+
+## 25-. [Sesiones](https://www.codeigniter.com/user_guide/libraries/sessions.html#using-the-session-class)
+
+Una vez que la autenticación es válida generaremos las variables de sesion y la redirección a la siguiente ruta.
+
+Generamos el controlador, el Route y la view de nuestro siguiente elemento. En el mismo controlador, Login, generamos un logout destruyendo la sesión y redireccionando al login. Creamos su route para acceder a ese método logout y modificamos las vistas para renderizar o no el botón de salir dependiendo de los valores de sesión
+
+Posteriormente en el index agregamos una validación para mostrar o no la vista login dependiendo si tenemos una sesión activa
+
+```php
+    public function index()
+    {
+        if (!session()->is_logged) {
+            return view('Auth/login');
+        }
+        return redirect()->route('posts');
+    }
+```
+
+Para eliminar el index.php de nuestra url accedemos a app\Config\App.php y en la propiedad $indexPage seteamos su valor a ''
+
+### Adición de datos de sesión
+
+Digamos que un usuario en particular inicia sesión en su sitio. Una vez autenticado, puede agregar su nombre de usuario y dirección de correo electrónico a la sesión, haciendo que esos datos estén disponibles globalmente para usted sin tener que ejecutar una consulta de base de datos cuando la necesite.
+
+Simplemente puede asignar datos al array $\_SESSION, como con cualquier otra variable. O como una propiedad de $session.
+
+Puede pasar un array que contenga los datos de su nueva sesión al set()método:
+
+```php
+$session->set($array);
+```
+
+Donde $array es un array asociativo que contiene sus nuevos datos. Aquí hay un ejemplo:
+
+```php
+$newdata = [
+    'username'  => 'johndoe',
+    'email'     => 'johndoe@some-site.com',
+    'logged_in' => true,
+];
+
+$session->set($newdata);
+```
+
+Si desea agregar datos de sesión un valor a la vez, set()también es compatible con esta sintaxis:
+
+```php
+$session->set('some_name', 'some_value');
+```
+
+Si desea verificar que existe un valor de sesión, simplemente verifique con isset():
+
+```php
+
+// returns false if the 'some_name' item doesn't exist or is null,
+// true otherwise:
+if (isset($_SESSION['some_name'])) {
+    // ...
+}
+```
+
+### Recuperación de datos de sesión
+
+Cualquier información de la matriz de sesión está disponible a través de $\_SESSIONsuperglobal:
+
+```php
+$item = $_SESSION['item'];
+```
+
+O a través del método de acceso convencional:
+
+```php
+$item = $session->get('item');
+```
+
+O a través del captador de magia:
+
+```php
+$item = $session->item;
+```
+
+O incluso a través del método del asistente de sesión:
+
+```php
+$item = session('item');
+```

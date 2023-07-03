@@ -8,7 +8,11 @@ class Login extends BaseController
 {
     public function index()
     {
-        return view('Auth/login');
+        // Generamos una condicional si existen o no variables de sesión
+        if (!session()->is_logged) {
+            return view('Auth/login');
+        }
+        return redirect()->route('posts');
     }
 
     public function signin()
@@ -46,6 +50,22 @@ class Login extends BaseController
                 'body' => 'Credenciales invalidas',
             ]);
         }
-        echo "Validaciones correctas";
+        session()->set([
+            'user_id' => $user[0]->id,
+            'user_name' => $user[0]->username,
+            'is_logged' => true,
+        ]);
+
+        return redirect('')->route('posts')->with('msg', [
+            'type' => 'success',
+            'body' => 'Bienvenido nuevamente ' . $user[0]->username,
+        ]);
+    }
+
+    // Método para eliminar la sesión y redirigir al login
+    public function signout()
+    {
+        session()->destroy();
+        return redirect('')->route('login');
     }
 }

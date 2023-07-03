@@ -58,7 +58,13 @@
                     <!-- Creamos validaciones para la clase active -->
                     <li class="<?= service('request')->getUri()->getPath() == 'home' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('home')) ?>">Inicio</a></li>
                     <li class="<?= service('request')->getUri()->getPath() == 'auth/registro' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('register')) ?>">Registro</a></li>
-                    <li class="<?= service('request')->getUri()->getPath() == 'auth/login' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('login')) ?>">Ingreso</a></li>
+                    <!-- Condicional para mostrar un contenido u otro dependiendo de las variables de sesión -->
+                    <?php if (session()->is_logged) : ?>
+                        <li><a href="<?= base_url(route_to('posts')) ?>">Ir al Dashboard</a></li>
+                        <li><a href="<?= base_url(route_to('signout')) ?>">Salir</a></li>
+                    <?php else : ?>
+                        <li class="<?= service('request')->getUri()->getPath() == 'auth/login' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('login')) ?>">Ingreso</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </nav>
