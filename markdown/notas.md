@@ -1176,3 +1176,7 @@ O incluso a través del método del asistente de sesión:
 ```php
 $item = session('item');
 ```
+
+## 26-. Maquetación del dashboard
+
+Generamos la maquetación de las vistas y generamos los layouts main y header para cuando un usuario esté logueado
