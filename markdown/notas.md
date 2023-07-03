@@ -1180,3 +1180,77 @@ $item = session('item');
 ## 26-. Maquetación del dashboard
 
 Generamos la maquetación de las vistas y generamos los layouts main y header para cuando un usuario esté logueado
+
+## 27-. Filtros
+
+Para validar el acceso a ciertas rutas dado por el login utilizaremos los Controller Filters.
+Según la documentación de CI, Los filtros de controlador le permiten realizar acciones antes o después de que se ejecuten los controladores. A diferencia de los eventos , puede elegir las URI específicas en las que se aplicarán los filtros. Los filtros entrantes pueden modificar la solicitud, mientras que los filtros posteriores pueden actuar e incluso modificar la respuesta, lo que permite mucha flexibilidad y potencia. Algunos ejemplos comunes de tareas que se pueden realizar con filtros son:
+
+- Realización de protección CSRF en las solicitudes entrantes
+- Restricción de áreas de su sitio en función de su función
+- Realizar limitación de velocidad en ciertos puntos finales
+- Mostrar una página de "Inactivo por mantenimiento"
+- Realizar negociación de contenido automática
+- y más…
+
+Crear un filtro
+Los filtros son clases simples que implementan CodeIgniter\Filters\FilterInterface. Contienen dos métodos: before()y after()que contienen el código que se ejecutará antes y después del controlador, respectivamente. Su clase debe contener ambos métodos, pero puede dejarlos vacíos si no son necesarios. Una clase de filtro de esqueleto se parece a:
+
+```php
+
+namespace App\Filters;
+
+use CodeIgniter\Filters\FilterInterface;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+
+class MyFilter implements FilterInterface
+{
+    public function before(RequestInterface $request, $arguments = null)
+    {
+        // Do something here
+    }
+
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
+    {
+        // Do something here
+    }
+}
+```
+
+Para "dar de alta" nuestros filtros accedemos al archivo app\Config\Filters.php y en la propiedad $aliases agregamos a nuestro array asociativo nuestro filtro. Aqui mismo se pueden configurar filtros globales pero eso no lo haremos en este momento.
+
+```php
+    public array $aliases = [
+        'csrf'          => CSRF::class,
+        'toolbar'       => DebugToolbar::class,
+        'honeypot'      => Honeypot::class,
+        'invalidchars'  => InvalidChars::class,
+        'secureheaders' => SecureHeaders::class,
+        'auth' => \App\Filters\Auth::class,
+    ];
+```
+
+En nuestro Filtro escribimos la lógica que deseemos
+
+```php
+    public function before(RequestInterface $request, $arguments = null)
+    {
+        if (!session()->is_logged) {
+            return redirect()->route('login');
+        }
+    }
+
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
+    {
+        // Do something here
+    }
+```
+
+Por último aplicamos ese filtro a nuestras rutas que deseemos, en este caso sería al grupo admin especificandolo en el array asociativo que recibe como parametro el método group
+
+```php
+$routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'auth'], function ($routes) {
+    $routes->get('articulos', 'Posts::index', ['as' => 'posts']);
+});
+```

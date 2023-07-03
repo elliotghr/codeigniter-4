@@ -47,7 +47,8 @@ $routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($route
     $routes->get('signout', 'Login::signout', ['as' => 'signout']);
 });
 
-$routes->group('admin', ["namespace" => "App\Controllers\Admin"], function ($routes) {
+// Agregamos un filtro a este grupo
+$routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'auth'], function ($routes) {
     $routes->get('articulos', 'Posts::index', ['as' => 'posts']);
 });
 /*
