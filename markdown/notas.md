@@ -1513,3 +1513,21 @@ Debemos cambiar el valor de la llave default_full con la ruta donde se encuentra
 ```
 
 Por último usamos los estilos de bulma para agregarle estilos
+
+Para el modulo de edición vamos a verificar que el id esté en la base de datos, en caso contrario mandamos una [excepción 404](https://www.codeigniter.com/user_guide/general/errors.html#pagenotfoundexception)
+
+## 33-. Editar
+
+Creamos nuestro módulo para actualizar registros, para esto crearemos la vista (que es un clon de la vista para crear, pero, con algunos cambios)
+
+- Agregarmos un id oculto
+- Agregamos un operador de corto circuito entre el valor old y el valor de la DB
+- Configuramos el action al nuevo endpoint
+
+Creamos la ruta en nuestro Router
+
+Creamos el flujo en el método del controlador, que es similar al método store
+
+- Agregamos validaciones
+- Recibimos los inputs
+- Utilizamos el método save para actualizar el registro pasando el id

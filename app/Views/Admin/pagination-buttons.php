@@ -10,7 +10,7 @@
         </a>
     <?php endif ?>
 
-    s <ul class="pagination-list">
+    <ul class="pagination-list">
         <?php foreach ($pager->links() as $link) : ?>
             <li>
                 <a class="pagination-link <?= $link['active'] ? 'is-current' : '' ?>" href="<?= $link['uri'] ?>">

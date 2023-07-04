@@ -57,6 +57,7 @@ $routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'au
     $routes->post('categorias/guardar', 'Categories::store', ['as' => 'categories_store']);
 
     $routes->get('categorias/editar/(:any)', 'Categories::edit/$1', ['as' => 'categories_edit']);
+    $routes->post('categorias/actualizar', 'Categories::update', ['as' => 'categories_update']);
 });
 /*
  * --------------------------------------------------------------------
