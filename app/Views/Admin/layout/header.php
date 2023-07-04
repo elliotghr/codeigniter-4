@@ -57,7 +57,8 @@
                 <ul>
                     <!-- Creamos validaciones para la clase active -->
                     <li class="<?= service('request')->getUri()->getPath() == 'admin/articulos' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('posts')) ?>">Inicio</a></li>
-                    <li class="<?= service('request')->getUri()->getPath() == '/' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('home')) ?>">Categorías</a></li>
+                    <!-- Se crea una expresión regular para validar que se contenga esta cadena -->
+                    <li class="<?= preg_match('|^admin/categorias(\S)*$|', service('request')->getUri()->getPath()) ? 'is-active' : null ?>"><a href="<?= base_url(route_to('categories')) ?>">Categorías</a></li>
                     <li class="<?= service('request')->getUri()->getPath() == '/' ? 'is-active' : null ?>"><a href="<?= base_url(route_to('home')) ?>">Usuarios</a></li>
                 </ul>
             </div>

@@ -1319,3 +1319,8 @@ if (!in_array($group_data[0]->name_group, $arguments)) {
 ```
 
 Si todo está correcto accederá sin problemas a las rutas de ese grupo, en caso contrario mandará ese 404
+
+## 29-. Dashboard
+
+Creamos las vistas, rutas y controladres referentes a las Categorias
+Se modificó el archivo main con una expresión regular para validar el path de la url, mientras se tenga la cadena "admin/categorias" mantendremos la clase is-active
