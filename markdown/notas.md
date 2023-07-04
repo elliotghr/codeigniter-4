@@ -1324,3 +1324,14 @@ Si todo está correcto accederá sin problemas a las rutas de ese grupo, en caso
 
 Creamos las vistas, rutas y controladres referentes a las Categorias
 Se modificó el archivo main con una expresión regular para validar el path de la url, mientras se tenga la cadena "admin/categorias" mantendremos la clase is-active
+
+## 30-. Altas
+
+- Creamos nuestra migración de la tabla Categories
+- Creamos nuestro modelo de la misma tabla
+- Creamos en nuestro controlador la lógica para insertar las categorias:
+  - Creamos las validaciones de los campos
+    - En caso de error enviamos el mensaje
+  - Si las validaciones están correctas recibimos los daots por post
+  - Conectamos al modelo y usamos el método save para insertarla
+  - Enviamos un mensaje de éxito
