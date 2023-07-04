@@ -3,6 +3,8 @@
 namespace App\Entities;
 
 use CodeIgniter\Entity\Entity;
+// Traemos el paquete hasids
+use Hashids\Hashids;
 
 class Category extends Entity
 {
@@ -12,5 +14,12 @@ class Category extends Entity
     public function getEditLink()
     {
         return base_url(route_to('categories_edit', $this->id));
+    }
+
+    public function getDeleteLink()
+    {
+        $hashids = new Hashids();
+
+        return base_url(route_to('categories_delete', $hashids->encode($this->id)));
     }
 }

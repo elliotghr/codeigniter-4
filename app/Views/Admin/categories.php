@@ -28,7 +28,7 @@ Lista de categorias
                     <td><?= $categoria->updated_at->humanize() ?></td>
                     <td>
                         <a href="<?= $categoria->getEditLink() ?>">Editar</a>
-                        <a href="<?= $categoria->getEditLink() ?>">Eliminar</a>
+                        <a href="<?= $categoria->getDeleteLink() ?>">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

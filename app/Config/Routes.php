@@ -58,6 +58,7 @@ $routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'au
 
     $routes->get('categorias/editar/(:any)', 'Categories::edit/$1', ['as' => 'categories_edit']);
     $routes->post('categorias/actualizar', 'Categories::update', ['as' => 'categories_update']);
+    $routes->get('categorias/eliminar/(:any)', 'Categories::delete/$1', ['as' => 'categories_delete']);
 });
 /*
  * --------------------------------------------------------------------

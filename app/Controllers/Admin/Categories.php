@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use Hashids\Hashids;
 
 class Categories extends BaseController
 {
@@ -96,6 +97,21 @@ class Categories extends BaseController
         return redirect('categories')->with("msg", [
             'type' => 'success',
             'body' => 'Categoría actualizada con éxito!',
+        ]);
+    }
+    public function delete($id)
+    {
+        $hashids = new Hashids();
+
+        $id = $hashids->decode($id)[0];
+
+        $model = model('CategoriesModel');
+
+        $model->delete($id);
+
+        return redirect('categories')->with("msg", [
+            'type' => 'success',
+            'body' => 'Categoría eliminada con éxito!',
         ]);
     }
 }

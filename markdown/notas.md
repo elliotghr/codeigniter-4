@@ -1531,3 +1531,15 @@ Creamos el flujo en el método del controlador, que es similar al método store
 - Agregamos validaciones
 - Recibimos los inputs
 - Utilizamos el método save para actualizar el registro pasando el id
+
+## 34-. Eliminar y Hashids
+
+Generamos el modulo para eliminar, para esto usaremos la librería [vinkla/hashids](https://github.com/vinkla/hashids)
+
+- Instalamos via composer
+- Generamos el método delete en la entidad codificando el id
+- Insertamos el método en la tabla
+- Generamos la ruta y el método del controlador para recibir los datos
+  - En nuestro controlador deocidficamos el hash
+  - Hacemos uso del modelo
+  - Eliminamos y redirigimos a la páginación de categorias
