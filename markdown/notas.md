@@ -1255,7 +1255,7 @@ $routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'au
 });
 ```
 
-## 28-. Roles y Privilegios
+## 28-. [Roles y Privilegios](https://www.codeigniter.com/user_guide/incoming/filters.html)
 
 En nuestro Filtro Auth creamos una validación verificando quie exista nuestro usuario
 
@@ -1336,7 +1336,7 @@ Se modificó el archivo main con una expresión regular para validar el path de 
   - Conectamos al modelo y usamos el método save para insertarla
   - Enviamos un mensaje de éxito
 
-## 31-. Paginación
+## 31-. [Paginación](https://www.codeigniter.com/user_guide/libraries/pagination.html?highlight=paginate)
 
 1. Creamos la estructura de nuestra tabla en la vista categorias
 2. En el método index del controlador accedemos al modelo y pasamos a la vista los registros con el método paginate
@@ -1447,3 +1447,69 @@ Generamos nuestro método en el controlador
         echo 'editando' . $id;
     }
 ```
+
+## 32-. Botones de paginación
+
+Para dar estilos a los botones de la paginación primero haremos uso de una porción de código HTML que proporciona CI4 en el apartado de [pagination](https://www.codeigniter.com/user_guide/libraries/pagination.html?highlight=paginate#links)
+
+```php
+
+<nav aria-label="<?= lang('Pager.pageNavigation') ?>">
+    <ul class="pagination">
+        <?php if ($pager->hasPreviousPage()) : ?>
+            <li>
+                <a href="<?= $pager->getFirst() ?>" aria-label="<?= lang('Pager.first') ?>">
+                    <span aria-hidden="true"><?= lang('Pager.first') ?></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?= $pager->getPreviousPage() ?>" aria-label="<?= lang('Pager.previous') ?>">
+                    <span aria-hidden="true"><?= lang('Pager.previous') ?></span>
+                </a>
+            </li>
+        <?php endif ?>
+
+        <?php foreach ($pager->links() as $link): ?>
+            <li <?= $link['active'] ? 'class="active"' : '' ?>>
+                <a href="<?= $link['uri'] ?>">
+                    <?= $link['title'] ?>
+                </a>
+            </li>
+        <?php endforeach ?>
+
+        <?php if ($pager->hasNextPage()) : ?>
+            <li>
+                <a href="<?= $pager->getNextPage() ?>" aria-label="<?= lang('Pager.next') ?>">
+                    <span aria-hidden="true"><?= lang('Pager.next') ?></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?= $pager->getLast() ?>" aria-label="<?= lang('Pager.last') ?>">
+                    <span aria-hidden="true"><?= lang('Pager.last') ?></span>
+                </a>
+            </li>
+        <?php endif ?>
+    </ul>
+</nav>
+```
+
+Esta porción de código es la que se renderiza en la vista
+
+```php
+    <?= $pager->links() ?>
+```
+
+Para que CI nos tome esta paginación debemos hacer un cambio en el archivo app\Config\Pager.php:
+
+Debemos cambiar el valor de la llave default_full con la ruta donde se encuentra nuestra paginación
+
+```php
+        public array $templates = [
+        // 'default_full'   => 'CodeIgniter\Pager\Views\default_full',
+        'default_full'   => '\App\Views\Admin\pagination-buttons',
+        'default_simple' => 'CodeIgniter\Pager\Views\default_simple',
+        'default_head'   => 'CodeIgniter\Pager\Views\default_head',
+    ];
+```
+
+Por último usamos los estilos de bulma para agregarle estilos

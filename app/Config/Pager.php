@@ -20,8 +20,11 @@ class Pager extends BaseConfig
      *
      * @var array<string, string>
      */
+
     public array $templates = [
-        'default_full'   => 'CodeIgniter\Pager\Views\default_full',
+        // Cambiamos la ruta de la paginación
+        // 'default_full'   => 'CodeIgniter\Pager\Views\default_full',
+        'default_full'   => '\App\Views\Admin\pagination-buttons',
         'default_simple' => 'CodeIgniter\Pager\Views\default_simple',
         'default_head'   => 'CodeIgniter\Pager\Views\default_head',
     ];
