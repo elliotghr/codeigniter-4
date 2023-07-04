@@ -1335,3 +1335,115 @@ Se modificó el archivo main con una expresión regular para validar el path de 
   - Si las validaciones están correctas recibimos los daots por post
   - Conectamos al modelo y usamos el método save para insertarla
   - Enviamos un mensaje de éxito
+
+## 31-. Paginación
+
+1. Creamos la estructura de nuestra tabla en la vista categorias
+2. En el método index del controlador accedemos al modelo y pasamos a la vista los registros con el método paginate
+
+```php
+$model = model('CategoriesModel');
+
+return view('Admin/categories', [
+    // Numero de registros por página
+    // En el archivo de configuración creamos la propiedad regPerPage y traemos su valor
+    'categories' => $model->paginate(config('CustomBlog')->regPerPage),
+    // Pasamos la propiedad pager que ya viene incluida en el modelo, el cual generará los indices de la paginación
+    'pager' => $model->pager
+]);
+```
+
+3. En la vista de la tabla imprimimos los indices de paginación usando el método links()
+
+```php
+        </tbody>
+    </table>
+    <?= $pager->links() ?>
+```
+
+4. Renderizamos los datos en la vista con un foreach
+
+```php
+        <tbody>
+            <?php foreach ($categories as $categoria) : ?>
+                <tr>
+                    <td><?= $categoria->id ?></td>
+                    <td><?= $categoria->name ?></td>
+                    <td><?= $categoria->created_at ?></td>
+                    <td><?= $categoria->updated_at ?></td>
+                    <td>
+                        <a href="">Editar</a>
+                        <a href="">Eliminar</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+```
+
+5. Creamos una Entidad para formatear las fechas además de generar un método que nos envíe a la ruta de edición
+
+```php
+class Category extends Entity
+{
+    // Hacemos uso de un date Mutator
+    protected $dates = ['created_at', 'updated_at'];
+
+    public function getEditLink()
+    {
+        return base_url(route_to('categories_edit', $this->id));
+    }
+}
+```
+
+En nuestro modelo usamos ese tipo de dato Entidad
+
+```php
+use App\Entities\Category;
+
+class CategoriesModel extends Model
+{
+    protected $table            = 'categories';
+    protected $primaryKey       = 'id';
+    protected $useAutoIncrement = true;
+    protected $returnType       = Category::class; //en lugar de object usamos el tipo de entidad
+    // Resto de código...
+}
+```
+
+Gracias a esto podemos usar el método humanize para las fechas e imprimir el resultado del método en nuestros anchors
+
+```php
+        <tbody>
+            <?php foreach ($categories as $categoria) : ?>
+                <tr>
+                    <td><?= $categoria->id ?></td>
+                    <td><?= $categoria->name ?></td>
+                    <td><?= $categoria->created_at->humanize() ?></td>
+                    <td><?= $categoria->updated_at->humanize() ?></td>
+                    <td>
+                        <a href="<?= $categoria->getEditLink() ?>">Editar</a>
+                        <a href="<?= $categoria->getEditLink() ?>">Eliminar</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+```
+
+Creamos la ruta para editar en nuestro Router
+
+```php
+$routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'auth:admin'], function ($routes) {
+    // Resto de rutas...
+
+    $routes->get('categorias/editar/(:any)', 'Categories::edit/$1', ['as' => 'categories_edit']);
+});
+```
+
+Generamos nuestro método en el controlador
+
+```php
+    public function edit($id)
+    {
+        echo 'editando' . $id;
+    }
+```

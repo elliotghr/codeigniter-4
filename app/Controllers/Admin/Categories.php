@@ -8,7 +8,15 @@ class Categories extends BaseController
 {
     public function index()
     {
-        return view('Admin/categories');
+        $model = model('CategoriesModel');
+
+        return view('Admin/categories', [
+            // Numero de registros por página
+            // En el archivo de configuración creamos la propiedad regPerPage y traemos su valor
+            'categories' => $model->paginate(config('CustomBlog')->regPerPage),
+            // Pasamos la propiedad pager que ya viene incluida en el modelo, el cual generará los indices de la paginación
+            'pager' => $model->pager
+        ]);
     }
     public function create()
     {
@@ -42,5 +50,9 @@ class Categories extends BaseController
             'type' => 'success',
             'body' => 'Categoría creada con éxito!',
         ]);
+    }
+    public function edit($id)
+    {
+        echo 'editando' . $id;
     }
 }

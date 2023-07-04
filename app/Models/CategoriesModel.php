@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Entities\Category;
 
 class CategoriesModel extends Model
 {
     protected $table            = 'categories';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
+    protected $returnType       = Category::class;
     protected $useSoftDeletes   = false;
     protected $allowedFields    = ['name'];
 

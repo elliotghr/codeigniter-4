@@ -6,7 +6,34 @@ Lista de categorias
 <?php $this->endSection() ?>
 <?php $this->section('content') ?>
 <main>
-    <h2>Listado de categorias</h2>
-    <a href="<?= base_url(route_to('categories_create')) ?>">Crear categorias</a>
+    <div class="field">
+        <a class="is-dark button" href="<?= base_url(route_to('categories_create')) ?>">Crear categorias</a>
+    </div>
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Creado</th>
+                <th>Actualizado</th>
+                <th colspan="2">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($categories as $categoria) : ?>
+                <tr>
+                    <td><?= $categoria->id ?></td>
+                    <td><?= $categoria->name ?></td>
+                    <td><?= $categoria->created_at->humanize() ?></td>
+                    <td><?= $categoria->updated_at->humanize() ?></td>
+                    <td>
+                        <a href="<?= $categoria->getEditLink() ?>">Editar</a>
+                        <a href="<?= $categoria->getEditLink() ?>">Eliminar</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?= $pager->links() ?>
 </main>
 <?php $this->endSection() ?>
