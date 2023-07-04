@@ -1543,3 +1543,10 @@ Generamos el modulo para eliminar, para esto usaremos la librería [vinkla/hashi
   - En nuestro controlador deocidficamos el hash
   - Hacemos uso del modelo
   - Eliminamos y redirigimos a la páginación de categorias
+
+## 35-. Migraciones y actualizar CI
+
+Para actualiza CI por composer solo usaremos el [comando](https://www.codeigniter.com/user_guide/installation/installing_composer.html#id11): composer update
+
+Comenzamos a crear los modulos para los POSTS y la tabla pivote categories post
+Inciamos con las Migraciones para generar las tablas posts y categories_posts
