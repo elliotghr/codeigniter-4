@@ -22,7 +22,18 @@ class Posts extends BaseController
 
     public function store()
     {
-        d($this->request->getPost());
-        dd($this->request->getFile('cover'));
+        // d($this->request->getPost());
+        // dd($this->request->getFile('cover'));
+        $validations = [
+            'title' => 'required',
+            'body' => 'required',
+            'published_at' => 'required|valid_date',
+            'categories.*' => 'permit_empty|is_not_unique[categories.id]',
+            'cover' => 'uploaded[cover]|is_image[cover]',
+        ];
+
+        if (!$this->validate($validations)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
     }
 }

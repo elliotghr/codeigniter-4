@@ -14,13 +14,13 @@ Crear articulo
                     <div class="field">
                         <label for="title" class="label">Titulo</label>
                         <div class="control">
-                            <input class="input" type="text" name="title" id="title" value="">
+                            <input class="input" type="text" name="title" id="title" value="<?= old('title'); ?>">
                         </div>
                     </div>
                     <div class="field">
                         <label for="body" class="label">Cuerpo</label>
                         <div class="control has-icons-left has-icons-right">
-                            <textarea class="textarea" name="body" id="body" cols="30" rows="10"></textarea>
+                            <textarea class="textarea" name="body" id="body" cols="30" rows="10"><?= old('body'); ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@ Crear articulo
                         <div class="field">
                             <label for="published_at" class="label">Fecha de publicación</label>
                             <div class="control has-icons-left has-icons-right">
-                                <input class="input is-success" type="date" name="published_at" id="published_at">
+                                <input class="input is-success" type="date" name="published_at" id="published_at" value="<?= old('published_at'); ?>">
                             </div>
                         </div>
                         <div class="field">
@@ -57,7 +57,7 @@ Crear articulo
                                 <?php foreach ($categories as $value) : ?>
                                     <div class="field">
                                         <label class="checkbox">
-                                            <input type="checkbox" name="categories[]" id="categories" value="<?= $value->name ?>">
+                                            <input type="checkbox" name="categories[]" id="categories" value="<?= $value->id ?>">
                                             <?= $value->name ?>
                                         </label>
                                     </div>
@@ -67,6 +67,16 @@ Crear articulo
                     </div>
                 </div>
             </div>
+            <?php
+            $errors = session('errors');
+            if (!empty($errors)) :
+                foreach ($errors as $value) : ?>
+                    <p class="has-text-danger"><?= $value ?></p>
+            <?php
+                endforeach;
+            endif;
+            ?>
+            <br>
             <div class="field">
                 <input type="submit" class="button is-dark is-fullwidth" value="Enviar"></input>
             </div>

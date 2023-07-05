@@ -1560,3 +1560,28 @@ Creamos módulo para la creación de posts
 3. Creamos la vista y su estructura HTML y datos para el envío de formularios
 4. Creamos la ruta y métodos para recibir los datos
 5. Recibimos los datos con los métodos getPost y getFile
+
+## 37-. Validación de formulario
+
+Creamos las validaciones en el controlador:
+
+```php
+    public function store()
+    {
+        // d($this->request->getPost());
+        // dd($this->request->getFile('cover'));
+        $validations = [
+            'title' => 'required',
+            'body' => 'required',
+            'published_at' => 'required|valid_date',
+            'categories.*' => 'permit_empty|is_not_unique[categories.id]',
+            'cover' => 'uploaded[cover]|is_image[cover]',
+        ];
+
+        if (!$this->validate($validations)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+    }
+```
+
+Generamos un renderizado de los errores y de los valores anteriores de los inputs
