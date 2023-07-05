@@ -6,6 +6,7 @@ Lista de articulos
 <?php $this->endSection() ?>
 <?php $this->section('content') ?>
 <main>
-    <h2>Posts</h2>
+    <h2>Lista de articulos</h2>
+    <a href="<?= base_url(route_to('posts_create')) ?>">Alta articulos</a>
 </main>
 <?php $this->endSection() ?>

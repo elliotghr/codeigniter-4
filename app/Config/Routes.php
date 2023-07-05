@@ -51,6 +51,8 @@ $routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($route
 // Pasamos los argumentos al filtro de auth
 $routes->group('admin', ["namespace" => "App\Controllers\Admin", 'filter' => 'auth:admin'], function ($routes) {
     $routes->get('articulos', 'Posts::index', ['as' => 'posts']);
+    $routes->get('articulos/crear', 'Posts::create', ['as' => 'posts_create']);
+    $routes->post('articulos/guardar', 'Posts::store', ['as' => 'posts_store']);
 
     $routes->get('categorias', 'Categories::index', ['as' => 'categories']);
     $routes->get('categorias/crear', 'Categories::create', ['as' => 'categories_create']);

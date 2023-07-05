@@ -1550,3 +1550,13 @@ Para actualiza CI por composer solo usaremos el [comando](https://www.codeignite
 
 Comenzamos a crear los modulos para los POSTS y la tabla pivote categories post
 Inciamos con las Migraciones para generar las tablas posts y categories_posts
+
+## 36-. Formulario de artículos
+
+Creamos módulo para la creación de posts
+
+1. Creamos la ruta donde se alojará la vista
+2. En el método renderizamos la view y pasamos los datos de las categorias
+3. Creamos la vista y su estructura HTML y datos para el envío de formularios
+4. Creamos la ruta y métodos para recibir los datos
+5. Recibimos los datos con los métodos getPost y getFile
