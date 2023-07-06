@@ -28,7 +28,7 @@ class Posts extends BaseController
         $validations = [
             'title' => 'required',
             'body' => 'required',
-            'published_at' => 'required|valid_date',
+            'publish_at' => 'required|valid_date',
             'categories.*' => 'permit_empty|is_not_unique[categories.id]',
             'cover' => 'uploaded[cover]|is_image[cover]',
         ];
@@ -47,8 +47,18 @@ class Posts extends BaseController
         // Incluimos la propiedad cover
         $post->cover = $file->getRandomName();
 
+        $postModel = model('PostModel');
+        $postModel->assignCategories($this->request->getVar('categories'));
+        // dd($post);
+        $postModel->insert($post);
+
         // Guardamos nuestros cover en la carpeta writable/uploads/covers
         $file->store('covers/', $post->cover);
-        dd($post);
+        // dd($post);
+
+        return redirect()->route('posts')->with('msg', [
+            'type' => 'success',
+            'body' => 'El artículo fue guardada correctamente'
+        ]);
     }
 }

@@ -44,9 +44,9 @@ Crear articulo
                         </div>
                         <br>
                         <div class="field">
-                            <label for="published_at" class="label">Fecha de publicación</label>
+                            <label for="publish_at" class="label">Fecha de publicación</label>
                             <div class="control has-icons-left has-icons-right">
-                                <input class="input is-success" type="date" name="published_at" id="published_at" value="<?= old('published_at'); ?>">
+                                <input class="input is-success" type="date" name="publish_at" id="publish_at" value="<?= old('published_at'); ?>">
                             </div>
                         </div>
                         <div class="field">

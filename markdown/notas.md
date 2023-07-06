@@ -1613,3 +1613,69 @@ $post->cover = $file->getRandomName();
 $file->store('covers/', $post->cover);
 // dd($post);
 ```
+
+## 39-. Guardar Artículos
+
+Ya con los datos validados generamos la inserción
+
+- Creamos el Modelo de la tabla post
+- Antes de generar la inserción crearemos un callback para obtener el id del post creado y mandarlo a la tabla pivote categories_post
+
+- Creamos un método assignCategories() para almacenar nuestro array de categorias en una propiedad
+- ```php
+        <!-- Controlador -->
+        $postModel = model('PostModel');
+        $postModel->assignCategories($this->request->getVar('categories'));
+  ```
+
+- ```php
+      // Modelo
+      protected $categories    = [];
+
+      // Creamos un método para guadar las categorias en un array llamado $categories
+          public function assignCategories($categories)
+      {
+      $this->categories = $categories;
+      }
+  ```
+
+  Para posteriormente crear un callback con la instruccón afterInsert
+
+```php
+    protected $afterInsert    = ['storeCategories'];
+
+    // Creamos una callback para insertar datos en otra tabla
+    public function storeCategories($data)
+    {
+        // Validamos que el array categories no venga vacío ya que no es un dato requerido
+        if (!empty($this->categories)) {
+            // Si viene con datos ingresamos al modelo de categories_post
+            $cpModel = model('CategoriesPosts');
+            // Declaramos un array
+            $cats = [];
+            // Creamos una estructura para insertar los datos de las categorias que vienen del formulario
+            foreach ($this->categories as $value) {
+                $cats[] = [
+                    'category_id' =>  $value,
+                    'post_id' => $data['id'],
+                ];
+            }
+            // Generamos un insertBatch
+            $cpModel->insertBatch($cats);
+        }
+        return $data;
+    }
+```
+
+Por ultimo, en nuestro controlador ocupamos el método store() para guardar nuestra imagen y redireccionamos a la lista de posts
+
+```php
+// Guardamos nuestros cover en la carpeta writable/uploads/covers
+$file->store('covers/', $post->cover);
+// dd($post);
+
+return redirect()->route('posts')->with('msg', [
+    'type' => 'success',
+    'body' => 'El artículo fue guardada correctamente'
+]);
+```
