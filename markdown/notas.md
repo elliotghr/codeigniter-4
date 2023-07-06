@@ -1563,7 +1563,7 @@ Creamos módulo para la creación de posts
 
 ## 37-. Validación de formulario
 
-Creamos las validaciones en el controlador:
+- Creamos las validaciones en el controlador:
 
 ```php
     public function store()
@@ -1581,7 +1581,35 @@ Creamos las validaciones en el controlador:
         if (!$this->validate($validations)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
+
+        // Guardamos los datos en una entidad
     }
 ```
 
 Generamos un renderizado de los errores y de los valores anteriores de los inputs
+
+- Guardaremos los datos recibidos por post en una entidad
+- Generamos un Modelo para los posts
+- Creamos un método setSlug() que generará un slug para el post
+  - Hacemos uso del método mb_url_title() para convertir eltitulo
+  - Para generar el slug haremos uso del helper [url_title](https://www.codeigniter.com/user_guide/helpers/url_helper.html?highlight=url_title#url_title) y mb_url_title
+  - Posterior a generar el slug vamos a verificar que no exista en la db, si existe usaremos el helper [text helper](https://www.codeigniter.com/user_guide/helpers/text_helper.html) para incrementar el slug y que no se repita
+- En el contrlador agregamos la propiedad author a la entidad
+- Por ultimo guardamos los datos del archivo con un nombre random usando el método getRandomName() y movemos el archivo a nuestro servidor
+
+```php
+$file = $this->request->getFile('cover');
+
+// Instanciamos la entidad
+$post = new Post($this->request->getPost());
+// Usamos el método setSlug
+$post->setSlug($this->request->getVar('title'));
+// Incluimos la propiedad author
+$post->author = session()->user_id;
+// Incluimos la propiedad cover
+$post->cover = $file->getRandomName();
+
+// Guardamos nuestros cover en la carpeta writable/uploads/covers
+$file->store('covers/', $post->cover);
+// dd($post);
+```

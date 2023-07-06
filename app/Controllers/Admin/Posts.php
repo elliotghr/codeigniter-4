@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Entities\Post;
 
 class Posts extends BaseController
 {
@@ -35,5 +36,19 @@ class Posts extends BaseController
         if (!$this->validate($validations)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
+        $file = $this->request->getFile('cover');
+
+        // Instanciamos la entidad
+        $post = new Post($this->request->getPost());
+        // Usamos el método setSlug
+        $post->setSlug($this->request->getVar('title'));
+        // Incluimos la propiedad author
+        $post->author = session()->user_id;
+        // Incluimos la propiedad cover
+        $post->cover = $file->getRandomName();
+
+        // Guardamos nuestros cover en la carpeta writable/uploads/covers
+        $file->store('covers/', $post->cover);
+        dd($post);
     }
 }
