@@ -33,4 +33,15 @@ class Post extends Entity
         }
         return $this;
     }
+    // Método para obtener los nombres de las categorias
+    public function getCategories()
+    {
+        $cpModel = model('CategoriesPosts');
+        return $cpModel->where('post_id', $this->id)->join('categories', 'categories.id = categories_posts.category_id')->findAll() ?? [];
+    }
+    // Método para renderizar las imagenes
+    public function getLink()
+    {
+        return base_url('covers/' . $this->cover);
+    }
 }

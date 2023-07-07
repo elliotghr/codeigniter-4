@@ -1746,3 +1746,52 @@ Por último renderizamos el método
 // Accedemos a la propiedad author que devuelve los datos del UsersInfoModel pero con los métodos de la entidad, con eso accedemos a getFullName
 <p class="subtitle is-6"><?= $value->author->getFullName() ?></p>
 ```
+
+## 42-. Categorías y enlaces simbólicos
+
+Renderizamos las categorias en nuestra vista, hacemos lo siguiente:
+
+- Generamos un método que nos traiga las categorias por post haciendo un join a la tabla categories para traer su nombre
+  ```php
+  <!-- En la entidad -->
+      public function getCategories()
+    {
+        $cpModel = model('CategoriesPosts');
+        return $cpModel->where('post_id', $this->id)->join('categories', 'categories.id = categories_posts.category_id')->findAll() ?? [];
+    }
+  ```
+    <!-- En la vista -->
+  ```php
+    <?php
+    if (!empty($value->getCategories())) :
+    foreach ($value->getCategories() as $category) :
+    ?>
+        <a href="#"><?= $category->name ?></a>
+    <?php
+    endforeach;
+    endif;
+    ?>
+  ```
+
+Para renderizar las imagenes crearemos un método en la entidad
+
+```php
+  public function getLink()
+  {
+      return base_url('covers/' . $this->cover);
+  }
+```
+
+Y lo imprimiremos en la vista
+
+```php
+<img src="<?= $value->getLink() ?>" alt="Placeholder image">
+```
+
+Sin emabrgo nuestras imagenes estpan alojadas en la ruta writable\uploads\covers y no en public\covers. Por tanto generaremos un enlace simbolico con el siguiente comando en la terminal
+
+```cli
+mklink /d c:\laragon\www\blog\public\covers c:\laragon\www\blog\writable\uploads\covers
+```
+
+![Vinculo simbolico](/markdown/assets/vinculo-simbolico.png)

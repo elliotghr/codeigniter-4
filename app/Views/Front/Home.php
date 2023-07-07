@@ -15,7 +15,8 @@ Home
                         <div class="card">
                             <div class="card-image">
                                 <figure class="image is-4by3">
-                                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                                    <!-- Traemos la imagen -->
+                                    <img src="<?= $value->getLink() ?>" alt="Placeholder image">
                                 </figure>
                             </div>
                             <div class="card-content">
@@ -34,7 +35,15 @@ Home
                                 <div class="content">
                                     <!-- Usamos el helper para deliminar 10 palabras y usamos la función strip_tags para escapar los caracteres HTML y PHP -->
                                     <?= character_limiter(strip_tags($value->body), 10) ?>
-                                    <a href="#">#css</a> <a href="#">#responsive</a>
+                                    <?php
+                                    if (!empty($value->getCategories())) :
+                                        foreach ($value->getCategories() as $category) :
+                                    ?>
+                                            <a href="#"><?= $category->name ?></a>
+                                    <?php
+                                        endforeach;
+                                    endif;
+                                    ?>
                                     <br>
                                     <!-- Usamos el helper para los datetime -->
                                     <time datetime="2016-1-1"><?= $value->publish_at->humanize() ?></time>
