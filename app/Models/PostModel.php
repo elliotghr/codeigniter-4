@@ -54,4 +54,11 @@ class PostModel extends Model
         }
         return $data;
     }
+
+    // El método retornará el where para validar la publicación del post
+    public function published()
+    {
+        $this->where('publish_at <=', date('Y-m-d H:i:s'));
+        return $this;
+    }
 }

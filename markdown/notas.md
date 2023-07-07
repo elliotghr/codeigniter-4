@@ -1679,3 +1679,31 @@ return redirect()->route('posts')->with('msg', [
     'body' => 'El artículo fue guardada correctamente'
 ]);
 ```
+
+## 40-. Consultar Posts
+
+Modificaremos la página home donde se muestran los posts
+Primero enviaremos los datos de los posts con el método paginate y orderBy a la vista
+En la vista renderizaremos cada uno de los posts y agregaremos el paginador
+
+Posterior a esto vamos a crear un método en el Modelo que valide la fecha de publicación contra el dia de hoy para solo mostrar los posts que deben ser publicados y eso lo ocuparemos en el Controlador antes de mandar los datos paginados
+
+```php
+// Controlador
+    public function index()
+    {
+        $model = model('PostModel');
+        $data['posts'] = $model->published()->orderBy('publish_at', 'DESC')->paginate(9);
+        $data['pager'] = $model->pager;
+        return view('Front/Home', $data);
+    }
+```
+
+```php
+// Modelo
+    public function published()
+    {
+        $this->where('publish_at <=', date('Y-m-d H:i:s'));
+        return $this;
+    }
+```
