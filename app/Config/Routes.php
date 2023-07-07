@@ -37,6 +37,8 @@ $routes->set404Override();
 // dentro de los corchetes podemos definir un namespace (en donde buscará los controladores)
 $routes->group('home', ["namespace" => "App\Controllers\Front"], function ($routes) {
     $routes->get('/', 'Home::index', ['as' => 'home']);
+    // Con segment le indicamos que será una ruta dinamica
+    $routes->get('articulo/(:segment)', 'Home::article/$1', ['as' => 'article']);
 });
 
 $routes->group('auth', ["namespace" => "App\Controllers\Auth"], function ($routes) {

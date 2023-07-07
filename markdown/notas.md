@@ -1795,3 +1795,74 @@ mklink /d c:\laragon\www\blog\public\covers c:\laragon\www\blog\writable\uploads
 ```
 
 ![Vinculo simbolico](/markdown/assets/vinculo-simbolico.png)
+
+## 43-. Vista de Artículos
+
+Generamos la renderización de las vistas de cada uno de los posts de manera dinamica
+
+1. Envolvemos nuestra card en un anchor
+   - Creamos una función en la Entidad que devuelva la ruta con el slug en la DB
+   ```php
+   <!-- Entidad -->
+   public function getLinkArticle()
+    {
+        return base_url(route_to('article', $this->slug));
+    }
+   ```
+   ```php
+   <!-- Vista -->
+   <a href="<?= $value->getLinkArticle() ?>">
+   ```
+2. Creamos su ruta recibiendo un segmento
+
+```php
+$routes->group('home', ["namespace" => "App\Controllers\Front"], function ($routes) {
+    // Con segment le indicamos que será una ruta dinamica
+    $routes->get('articulo/(:segment)', 'Home::article/$1', ['as' => 'article']);
+});
+```
+
+3. Creamos el método en el controlador que renderizará los datos del post
+
+```php
+    public function article($slug)
+    {
+        $model = model('PostModel');
+        // Validamos la existencia del slug
+        if (!$post = $model->where('slug', $slug)->first()) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+        $data['post'] = $post;
+        return view('Front/article', $data);
+        echo $slug;
+    }
+```
+
+4. En nuestra view renderizamos los datos
+
+```php
+<!-- Cada vez que una vista quiera insertarse en un diseño, debe usar el método extend() en la parte superior del archivo -->
+<?= $this->extend('Front/layout/main') ?>
+<!-- Entre el método section y endSection pasamos el contenido de los componentes dinamicos -->
+<?php $this->section('title') ?>
+<?= $post->titl ?>
+<?php $this->endSection() ?>
+<?php $this->section('content') ?>
+<main>
+    <section class="section">
+        <div class="content">
+            <img src="<?= $post->getLink() ?>" alt="" style="width:100%;height:300px;object-fit:cover">
+            <h1>Titulo: <?= $post->title ?></h1>
+            <h3>Por: <?= $post->author->getFullName() ?></h3>
+            <p>Fecha: <?= $post->publish_at->humanize() ?></p>
+            <?php foreach ($post->getCategories() as $value) : ?>
+                <div class="tags are-medium">
+                    <span class="tag"><?= $value->name ?></span>
+                </div>
+            <?php endforeach; ?>
+            <p><?= $post->body ?></p>
+        </div>
+    </section>
+</main>
+<?php $this->endSection() ?>
+```

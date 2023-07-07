@@ -44,4 +44,8 @@ class Post extends Entity
     {
         return base_url('covers/' . $this->cover);
     }
+    public function getLinkArticle()
+    {
+        return base_url(route_to('article', $this->slug));
+    }
 }
