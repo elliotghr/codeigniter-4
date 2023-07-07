@@ -6,7 +6,7 @@ use CodeIgniter\Entity\Entity;
 
 class Post extends Entity
 {
-    protected $dates   = ['created_at', 'updated_at', 'deleted_at'];
+    protected $dates   = ['created_at', 'updated_at', 'deleted_at', 'publish_at'];
 
     public function setSlug($title)
     {
@@ -23,5 +23,14 @@ class Post extends Entity
 
         // Asignamos el valor de slug a la entidad
         $this->attributes['slug'] = $slug;
+    }
+    // Generamos un método getAuthor para obtener los datos de otra tabla
+    public function getAuthor()
+    {
+        if (!empty($this->attributes['author'])) {
+            $userModel = model('UsersInfoModel');
+            return $userModel->where('user_id', $this->attributes['author'])->first();
+        }
+        return $this;
     }
 }

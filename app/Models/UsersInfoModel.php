@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Entities\UserInfo;
 
 class UsersInfoModel extends Model
 {
     protected $table            = 'info_users';
     protected $primaryKey       = 'user_id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
+    // Traemos los datos por la clase de la entidad UserInfo
+    protected $returnType       = UserInfo::class;
     protected $useSoftDeletes   = false;
     protected $allowedFields    = ['user_id', 'name', 'surname', 'country_id'];
 

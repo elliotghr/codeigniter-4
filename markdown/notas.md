@@ -1707,3 +1707,42 @@ Posterior a esto vamos a crear un método en el Modelo que valide la fecha de pu
         return $this;
     }
 ```
+
+## 41-. Relacionar entidades
+
+La impresión del valor author trae únicamente el ID, para esto haremos lo siguiente:
+
+1. En nuestra entidad Post crearemos un método getAuthor el cual buscará la coincidencia del author en UsersInfo
+
+```php
+    public function getAuthor()
+    {
+        if (!empty($this->attributes['author'])) {
+            $userModel = model('UsersInfoModel');
+            return $userModel->where('user_id', $this->attributes['author'])->first();
+        }
+        return $this;
+    }
+```
+
+En nuestro modelo UsersInfoModel obtendremos los datos de la Entidad UserInfo
+
+```php
+    protected $returnType       = UserInfo::class;
+```
+
+Para que en nuestra Entidad definamos un método getFullName() y poder obtener los datos del autor
+
+```php
+    public function getFullName()
+    {
+        return $this->name . " " . $this->surname;
+    }
+```
+
+Por último renderizamos el método
+
+```php
+// Accedemos a la propiedad author que devuelve los datos del UsersInfoModel pero con los métodos de la entidad, con eso accedemos a getFullName
+<p class="subtitle is-6"><?= $value->author->getFullName() ?></p>
+```
