@@ -1866,3 +1866,62 @@ $routes->group('home', ["namespace" => "App\Controllers\Front"], function ($rout
 </main>
 <?php $this->endSection() ?>
 ```
+
+## 44-. [View Cells](https://www.codeigniter.com/user_guide/outgoing/view_cells.html)
+
+Muchas aplicaciones tienen pequeños fragmentos de vista que se pueden repetir de una página a otra o en diferentes lugares de las páginas. Suelen ser cuadros de ayuda, controles de navegación, anuncios, formularios de inicio de sesión, etc. CodeIgniter le permite encapsular la lógica de estos bloques de presentación dentro de View Cells. Son básicamente mini vistas que se pueden incluir en otras vistas. Pueden tener lógica incorporada para manejar cualquier lógica de visualización específica de celda. Se pueden usar para hacer que sus vistas sean más legibles y fáciles de mantener separando la lógica de cada celda en su propia clase.
+
+CodeIgniter admite dos tipos de View Cells: simple y controlado. Las celdas de vista simple se pueden generar a partir de cualquier clase y método de su elección y no tienen que seguir ninguna regla, excepto que debe devolver una cadena. Las celdas de vista controladas deben generarse a partir de una clase que amplíe Codeigniter\View\Cells\Cellla clase, lo que proporciona una capacidad adicional que hace que sus celdas de vista sean más flexibles y rápidas de usar.
+
+1. En nuestra vista de los post incluiremos una view Cell de las categorias, primero declararemos las views Cells al final de nuestra sección de posts
+
+```php
+<section class="section">
+    <h1>Articulos de php</h1>
+    <!-- Creamos views cell para nuestras categorias -->
+    <!-- Especificamos el método en el controlador, pasamos el nombre de la categoria y un limite opcional -->
+    <?= view_cell('\App\Controllers\Front\Home::filter', ['category' => 'PHP', 'limit' => 5]) ?>
+    <!-- view_cell('\App\Controllers\Front\Home::filter', ['category' => 'JS', 'limit' => 1]) -->
+    <h1>Articulos de JS</h1>
+    <?= view_cell('\App\Controllers\Front\Home::filter', ['category' => 'JS']) ?>
+</section>
+```
+
+Aqui estamos usando el método view*cell() donde, el primer parametro es el nombre de clase y método a llamar (En este caso usamos el namespace completo. Si no se especifica el namespace entonces CI asume que la clase y el método se encuetran en App\Cells y posteriormente en un archivo que contiene esa clase y método app/Cells/MyClass.php), y el segundo parametro es un \_array* de parametros para pasar al método
+
+2. Generamos una vista que será la que renderice nuestro view Cell, en nuestro caso, nuestra vista es app\Views\Front\filter.php
+
+3. En el controlador creamos la función que establecimos en el view Cell
+   Esta función recibe los argumentos/parametros que establecimos en el array del view cell
+
+```php
+    // Controlador
+    public function filter($args)
+    {
+        // Traesmos el modelo
+        $model = model('PostModel');
+        // Importamos los helpers para nuestra vista
+        helper('text');
+        $data['posts'] = $model->getPostsByCategory($args['category'])->findAll($args['limit'] ?? 0);
+        // Retornamos la vista filter donde se renderizará todo
+        // Pasamos la variable posts donde enviamos la consulta del modelo, pasamos la categoria del view cell y al findAll le pasamos el limite si viene definido
+        return view('Front/filter', $data);
+    }
+```
+
+```php
+    // Modelo
+    // Generamos un método que hará un join de las categorias para obteneras por el nombre
+    public function getPostsByCategory($category)
+    {
+        return $this
+            ->select('posts.*')
+            ->join('categories_posts', 'posts.id = categories_posts.post_id')
+            ->join('categories', 'categories.id = categories_posts.category_id')
+            ->where('categories.name', $category);
+    }
+```
+
+En nuestro controlador renderizamos la vista que creamos y adicionalmente le pasamos un array de datos para renderizar nuestros post x categoría usando las variables que recibimos
+
+Con esto se estará renderizando nuestra view cell en nuestra sección, esto se puede reutilizar en cualquier vistas

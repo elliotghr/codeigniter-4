@@ -31,4 +31,16 @@ class Home extends BaseController
         return view('Front/article', $data);
         echo $slug;
     }
+
+    public function filter($args)
+    {
+        // Traesmos el modelo
+        $model = model('PostModel');
+        // Importamos los helpers para nuestra vista
+        helper('text');
+        $data['posts'] = $model->getPostsByCategory($args['category'])->findAll($args['limit'] ?? 0);
+        // Retornamos la vista filter donde se renderizará todo
+        // Pasamos la variable posts donde enviamos la consulta del modelo, pasamos la categoria del view cell y al findAll le pasamos el limite si viene definido
+        return view('Front/filter', $data);
+    }
 }

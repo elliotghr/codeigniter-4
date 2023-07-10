@@ -57,6 +57,15 @@ Home
             </div>
             <?= $pager->links() ?>
         </section>
+        <section class="section">
+            <h1>Articulos de php</h1>
+            <!-- Creamos views cell para nuestras categorias -->
+            <!-- Especificamos el método en el controlador, pasamos el nombre de la categoria y un limite opcional -->
+            <?= view_cell('\App\Controllers\Front\Home::filter', ['category' => 'PHP', 'limit' => 5]) ?>
+            <!-- view_cell('\App\Controllers\Front\Home::filter', ['category' => 'JS', 'limit' => 1]) -->
+            <h1>Articulos de JS</h1>
+            <?= view_cell('\App\Controllers\Front\Home::filter', ['category' => 'JS']) ?>
+        </section>
     </div>
 </main>
 <?php $this->endSection() ?>

@@ -61,4 +61,13 @@ class PostModel extends Model
         $this->where('publish_at <=', date('Y-m-d H:i:s'));
         return $this;
     }
+    // Generamos un método que hará un join de las categorias para obteneras por el nombre
+    public function getPostsByCategory($category)
+    {
+        return $this
+            ->select('posts.*')
+            ->join('categories_posts', 'posts.id = categories_posts.post_id')
+            ->join('categories', 'categories.id = categories_posts.category_id')
+            ->where('categories.name', $category);
+    }
 }
